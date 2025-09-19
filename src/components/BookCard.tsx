@@ -1,24 +1,21 @@
-import Image from 'next/image';
+import Image from "next/image";
 
-interface BookCardProps {
-  title: string;
-  author: string;
-  imageUrl: string;
-}
-
-export default function BookCard({ title, author, imageUrl }: BookCardProps) {
+export default function BookCard({ title, author, imageUrl }) {
   return (
-    <div className="flex flex-col items-center bg-[var(--form-background)] rounded-xl shadow-md p-4 transition-transform transform hover:scale-105">
-      <div className="relative w-full h-48 mb-4">
-       
+    <div className="bg-[#EFEAE4] rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105">
+      <div className="relative w-full h-64">
+        <Image
+          src={imageUrl}
+          alt={`Capa do livro ${title}`}
+          fill={true} 
+          style={{ objectFit: 'cover' }}
+        />
       </div>
-      <div className="flex flex-col text-center">
-        <h3 className="text-lg font-bold text-gray-800">
+      <div className="p-4">
+        <h3 className="text-xl font-semibold text-[#6F4E37] mb-2">
           {title}
         </h3>
-        <p className="text-sm text-gray-600">
-          {author}
-        </p>
+        <p className="text-[#8B4513] italic">{author}</p>
       </div>
     </div>
   );
