@@ -1,6 +1,7 @@
 import { BookOpen } from "lucide-react";
+import BookCard from "@/components/BookCard";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <div className="flex justify-center items-center h-screen flex-col gap-4 bg-[#d7a86e] text-[#3e2723] px-4 text-center">
       <h1 className="font-bold flex items-center gap-2

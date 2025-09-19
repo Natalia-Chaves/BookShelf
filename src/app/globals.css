@@ -1,10 +1,49 @@
 @import "tailwindcss";
 
+/* ======== CORES PRINCIPAIS ======== */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #422718; /* Espresso: Cor de fundo para navbar e footer */
+  --foreground: #ededed; /* Cor do texto principal */
+  --text-primary: #ffffff; /* Para texto do botão e títulos */
+  --divider-color: #A56734; /* Caramel: Para as linhas divisoras */
+  --main-background: #512b1e; /* NOVA cor de fundo para a seção principal */
+  --form-background: #D9B9A0; /* Tan: Cor de fundo para os cards */
 }
 
+/* ======== BODY ======== */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ======== HEADER & FOOTER ======== */
+header,
+footer {
+  background-color: var(--background);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--divider-color);
+}
+
+header {
+  border-bottom: none;
+}
+
+/* ======== MAIN ======== */
+main {
+  background-color: var(--main-background);
+  color: var(--text-primary);
+  padding: 2rem;
+  display: block;
+  flex-grow: 1;
+}
+
+/* ======== THEME ======== */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -12,15 +51,14 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* ======== DARK MODE ======== */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #422718;
     --foreground: #ededed;
+    --text-primary: #ffffff;
+    --divider-color: #A56734;
+    --main-background: #512b1e;
+    --form-background: #D9B9A0;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
