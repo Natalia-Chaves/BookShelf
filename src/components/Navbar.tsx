@@ -59,7 +59,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       <div className="md:hidden flex justify-around bg-[#5d4037] py-2">
-        <a href="#"><Library size={22} className="text-[#d7a86e]" /></a>
+        <a href="biblioteca"><Library size={22} className="text-[#d7a86e]" /></a>
         <a href="#"><Search size={22} className="text-[#d7a86e]" /></a>
         <a href="#"><User size={22} className="text-[#d7a86e]" /></a>
       </div>
