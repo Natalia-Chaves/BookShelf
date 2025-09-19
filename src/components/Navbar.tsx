@@ -26,8 +26,8 @@ export default function Navbar() {
         {/* Links */}
         <div className="hidden md:flex gap-8 text-sm font-medium">
           <a href="biblioteca" className="hover:text-[#d7a86e] transition">Minha Biblioteca</a>
-          <a href="#" className="hover:text-[#d7a86e] transition">Explorar</a>
-          <a href="#" className="hover:text-[#d7a86e] transition">Categorias</a>
+          <a href="Explorar" className="hover:text-[#d7a86e] transition">Explorar</a>
+          <a href="Categorias" className="hover:text-[#d7a86e] transition">Categorias</a>
         </div>
 
         {/* Search */}
