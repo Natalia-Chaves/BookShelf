@@ -1,59 +1,19 @@
-'use client';
+// src/app/BibliotecaPage.jsx
+'use client'; 
 
-import { useState } from 'react';
-import BookCard from "../../components/BookCard";
-import { books as initialBooks } from "@/lib/books"; 
+import { Plus } from "lucide-react"; // Importe o ícone Plus
+import BookCard from "@/components/BookCard";
+import { books } from "@/lib/books"; 
 
 export default function BibliotecaPage() {
-  const [showForm, setShowForm] = useState(false);
-  const [bookList, setBookList] = useState(initialBooks);
-
-  interface Book {
-    title: string;
-    author: string;
-    imageUrl: string;
-  }
-
-  interface AddBookFormProps {
-    onAddBook: (newBook: Book) => void;
-    onCancel: () => void;
-  }
-
-  const handleAddBook = (newBook: Book) => {
-    setBookList([newBook, ...bookList]);
-    setShowForm(false);
-  };
-
-  const handleShowForm = () => {
-    setShowForm(true);
-  };
-
-  const handleCancelForm = () => {
-    setShowForm(false);
-  };
-
   return (
-    <main className="container mx-auto px-4 py-8 bg-[#D2B48C] min-h-screen">
-      <div className="flex justify-between items-center mb-12">
-        <h2 className="text-3xl font-bold text-[#6F4E37] text-center">
-          Sua Biblioteca de Livros
-        </h2>
-        <button 
-          onClick={handleShowForm}
-          className="bg-[#A0522D] hover:bg-[#8B4513] text-white font-bold py-2 px-4 rounded-md transition-colors duration-300">
-          Adicionar Livro
-        </button>
-      </div>
+    <main className=" mx-auto px-4 py-8 bg-[#6F4E37] min-h-screen">
+      <h2 className="text-3xl font-bold text-[#EFEAE4] text-center mb-12">
+        Sua Biblioteca de Livros
+      </h2>
       
-      {showForm && (
-        <AddBookForm 
-          onAddBook={handleAddBook} 
-          onCancel={handleCancelForm} 
-        />
-      )}
-
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {bookList.map((book, index) => (
+        {books.map((book, index) => (
           <BookCard 
             key={index} 
             title={book.title} 
@@ -61,6 +21,18 @@ export default function BibliotecaPage() {
             imageUrl={book.imageUrl} 
           />
         ))}
+
+        {/* Botão de Adicionar Livro como um "card" no grid */}
+        <div className="flex items-center justify-center p-4">
+          <button 
+            // onClick={handleShowForm} // Ative este onClick se você tiver o formulário
+            className="w-24 h-24 bg-[#A0522D] hover:bg-[#8B4513] text-white rounded-full flex items-center justify-center shadow-lg transform transition-transform duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-[#A0522D] focus:ring-opacity-50"
+            aria-label="Adicionar novo livro"
+          >
+            {/* Use o componente de ícone <Plus /> */}
+            <Plus size={40} strokeWidth={2.5} />
+          </button>
+        </div>
       </div>
     </main>
   );
