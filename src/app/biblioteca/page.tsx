@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import BookCard from "@/components/BookCard";
+import BookCard from "../../components/BookCard";
 import { books as initialBooks } from "@/lib/books"; 
 
 export default function BibliotecaPage() {
