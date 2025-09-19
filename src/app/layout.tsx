@@ -1,46 +1,21 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import './globals.css';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-  title: "CafeBooks",
-  description: "Sua biblioteca de livros online com um toque de café.",
+export const metadata = {
+  title: 'CaféBooks',
+  description: 'Sua biblioteca com cheirinho de café!',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#f5f5dc] text-[#3e2723] flex flex-col min-h-screen overflow-hidden`}
-      >
-        <header className="sticky top-0 z-50 border-b shadow-sm">
-          <Navbar />
-        </header>
-
-        {/* O conteúdo principal ocupa o espaço restante e pode ter rolagem interna */}
-        <main className="flex-1 bg-[#d7a86e] overflow-y-auto">
+      <body className="flex flex-col min-h-screen">
+        <Navbar />
+        <div className="flex-grow">
           {children}
-        </main>
-
-        <footer className="mt-auto">
-          <Footer />
-        </footer>
+        </div>
+        <Footer />
       </body>
     </html>
   );
