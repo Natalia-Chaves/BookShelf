@@ -27,14 +27,16 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#f5f5dc] text-[#3e2723] flex flex-col min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#f5f5dc] text-[#3e2723] flex flex-col min-h-screen overflow-hidden`}
       >
         <header className="sticky top-0 z-50 border-b shadow-sm">
           <Navbar />
         </header>
 
-        {/* flex-1 garante que o conteúdo empurre o footer */}
-        <main className="flex-1 bg-[#d7a86e]">{children}</main>
+        {/* O conteúdo principal ocupa o espaço restante e pode ter rolagem interna */}
+        <main className="flex-1 bg-[#d7a86e] overflow-y-auto">
+          {children}
+        </main>
 
         <footer className="mt-auto">
           <Footer />

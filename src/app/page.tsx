@@ -4,7 +4,7 @@ import { Coffee } from "lucide-react";
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col justify-center items-center h-155 w-full gap-4 bg-[#d7a86e] text-[#3e2723] px-4 text-center overflow-hidden fixed">
+    <div className="flex flex-col justify-center items-center min-h-screen w-full gap-4 bg-[#d7a86e] text-[#3e2723] px-4 text-center">
       <h1 className="font-bold flex items-center gap-2
         text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
         <BookOpen className="size-12 sm:size-16 md:size-20 lg:size-24 xl:size-28" />
