@@ -19,13 +19,13 @@ export default function Navbar() {
 
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <BookOpen size={28} className="text-[#d7a86e]" />
+          <BookOpen size={28} className="text-[#d7a86e]" href="/" onClick={() => {}} />
           <span className="text-2xl font-bold">CaféBooks</span>
         </div>
 
         {/* Links */}
         <div className="hidden md:flex gap-8 text-sm font-medium">
-          <a href="#" className="hover:text-[#d7a86e] transition">Minha Biblioteca</a>
+          <a href="biblioteca" className="hover:text-[#d7a86e] transition">Minha Biblioteca</a>
           <a href="#" className="hover:text-[#d7a86e] transition">Explorar</a>
           <a href="#" className="hover:text-[#d7a86e] transition">Categorias</a>
         </div>
