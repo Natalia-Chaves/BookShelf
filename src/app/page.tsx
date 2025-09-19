@@ -1,5 +1,6 @@
-import { BookOpen, Home } from "lucide-react";
-import { Coffee } from "lucide-react";
+/* eslint-disable react/jsx-no-undef */
+import { BookOpen, CoffeeIcon, Home } from "lucide-react";
+
 
 
 export default function HomePage() {
@@ -15,6 +16,7 @@ export default function HomePage() {
         text-lg sm:text-xl md:text-2xl lg:text-3xl inline-flex items-center gap-2">
         Sua biblioteca com cheirinho de café!
       </p>
+      
     </div>
   );
 }
