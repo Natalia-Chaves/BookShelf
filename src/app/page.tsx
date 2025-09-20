@@ -24,10 +24,12 @@ export default function HomePage({ theme }) {
         Sua biblioteca com cheirinho de café!
       </p>
 
-      {/* Botão de Login */}
+      {/* Botão de Entrar que agora muda de cor com o tema */}
       <button
         onClick={() => router.push('/biblioteca')}
-        className="bg-[#80633f] text-[#ffffff] px-6 py-3 rounded-full font-semibold text-lg hover:bg-[#c7925c] transition-colors"
+        className={`px-6 py-3 rounded-full font-semibold text-lg transition-colors 
+          ${theme === 'dark' ? 'bg-[#d7a86e] text-[var(--background)] hover:bg-[#c7925c]' : 'bg-[#512b1e] text-[#ffffff] hover:bg-[#A56734]'}
+        `}
       >
         Entrar
       </button>

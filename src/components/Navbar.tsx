@@ -1,15 +1,32 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BookOpen, Search, Library, User, Sun, Moon, Filter } from "lucide-react";
-import { useRouter, useSearchParams } from 'next/navigation';
 
 const ALL_GENRES = ["Fantasia", "Fábula", "Sátira", "Distopia", "Ficção Científica", "Aventura", "Clássico", "Política", "Épico", "Infantil", "Filosofia", "Não-Ficção", "História", "Antropologia", "Jovem Adulto"];
 const ALL_YEARS = ["1950", "1960", "2000", "2010"];
 
+// Função para obter parâmetros da URL
+const getSearchParams = () => {
+  if (typeof window !== 'undefined') {
+    return new URLSearchParams(window.location.search);
+  }
+  return new URLSearchParams();
+};
+
 export default function Navbar({ theme, toggleTheme }) {
   const [showFilters, setShowFilters] = useState(false);
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const [searchParams, setSearchParams] = useState(getSearchParams());
+
+  // Use useEffect para atualizar os parâmetros de busca quando a URL mudar
+  useEffect(() => {
+    const handlePopstate = () => {
+      setSearchParams(getSearchParams());
+    };
+    window.addEventListener('popstate', handlePopstate);
+    return () => {
+      window.removeEventListener('popstate', handlePopstate);
+    };
+  }, []);
 
   const currentSearchTerm = searchParams.get('busca') || '';
   const currentGenre = searchParams.get('genero') || '';
@@ -26,7 +43,7 @@ export default function Navbar({ theme, toggleTheme }) {
     } else {
       params.delete('busca');
     }
-    router.push(`/biblioteca?${params.toString()}`, { scroll: false });
+    window.location.href = `/biblioteca?${params.toString()}`;
   };
 
   const handleFilter = (type, value) => {
@@ -36,17 +53,17 @@ export default function Navbar({ theme, toggleTheme }) {
     } else {
       params.set(type, value);
     }
-    router.push(`/biblioteca?${params.toString()}`, { scroll: false });
+    window.location.href = `/biblioteca?${params.toString()}`;
   };
 
   return (
     <nav className="w-full bg-[var(--background)] text-[var(--foreground)] shadow-lg relative">
       <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-        {/* Logo */}
-        <div className="flex items-center gap-2">
+        {/* Logo - agora um link clicável */}
+        <a href="/" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition">
           <BookOpen size={28} className="text-[#d7a86e]" />
           <span className="text-2xl font-bold">CaféBooks</span>
-        </div>
+        </a>
 
         {/* Links */}
         <div className="hidden md:flex gap-8 text-sm font-medium">
@@ -101,13 +118,13 @@ export default function Navbar({ theme, toggleTheme }) {
 
         {/* Perfil + Toggle */}
         <div className="ml-4 flex items-center gap-3">
-          <button
-            onClick={() => router.push('/perfil')}
+          <a
+            href="/perfil"
             className="flex items-center gap-2 bg-[#d7a86e] text-[var(--background)] px-4 py-2 rounded-lg hover:bg-[#c7925c] transition"
           >
             <User size={18} />
             <span className="hidden md:inline">Perfil</span>
-          </button>
+          </a>
 
           {/* Botão Dark/Light */}
           <button

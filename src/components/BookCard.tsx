@@ -1,4 +1,6 @@
-// src/components/BookCard.tsx
+'use client';
+
+import React from "react";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 
 export default function BookCard({ book, onEdit, onDelete }) {
@@ -6,7 +8,7 @@ export default function BookCard({ book, onEdit, onDelete }) {
 
   return (
     <div className="bg-[#EFEAE4] rounded-lg shadow-md overflow-hidden transform transition-all duration-300 hover:scale-105">
-      <div className="relative w-full h-64">
+      <div className="relative w-full h-64 bg-gray-300 flex items-center justify-center">
         <img
           src={imageUrl}
           alt={`Capa do livro ${title}`}
@@ -20,8 +22,9 @@ export default function BookCard({ book, onEdit, onDelete }) {
         <p className="text-[#8B4513] italic mb-4">{author}</p>
         
         <div className="flex gap-2">
+          {/* Botões de Ação */}
           <button
-            onClick={() => alert(`Visualizar livro: ${title}`)}
+            onClick={() => console.log(`Visualizar livro: ${title}`)}
             className="p-1.5 rounded-full bg-[#A0522D] text-white hover:bg-[#8B4513] transition-colors"
             aria-label="Visualizar livro"
           >
