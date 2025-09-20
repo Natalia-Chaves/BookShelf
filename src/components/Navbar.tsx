@@ -61,7 +61,7 @@ export default function Navbar({ theme, toggleTheme }) {
       <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
         {/* Logo - agora um link clicável */}
         <a href="/" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition">
-          <BookOpen size={28} className="text-[#d7a86e]" />
+          <BookOpen size={28} />
           <span className="text-2xl font-bold">CaféBooks</span>
         </a>
 
@@ -74,13 +74,13 @@ export default function Navbar({ theme, toggleTheme }) {
 
         {/* Search */}
         <div className="relative flex items-center bg-[var(--form-background)] rounded-lg px-3 py-2 w-48 md:w-64">
-          <Search size={18} className="text-[#8f704a]" />
+          <Search size={18} />
           <input
             type="text"
             placeholder="Buscar livros..."
             value={searchTerm}
             onChange={handleSearch}
-            className="bg-transparent w-full px-2 text-sm focus:outline-none text-[#d7a86e]"
+            className="bg-transparent w-full px-2 text-sm focus:outline-none"
           />
           <button onClick={() => setShowFilters(!showFilters)} className="text-[#d7a86e] hover:text-white ml-2">
             <Filter size={18} />
@@ -116,11 +116,13 @@ export default function Navbar({ theme, toggleTheme }) {
           )}
         </div>
 
-        {/* Perfil + Toggle */}
+              {/* Perfil + Toggle */}
         <div className="ml-4 flex items-center gap-3">
-          <a
-            href="/perfil"
-            className="flex items-center gap-2 bg-[#d7a86e] text-[var(--background)] px-4 py-2 rounded-lg hover:bg-[#c7925c] transition"
+          <a href="/perfil" className={`flex items-center gap-2 px-4 py-2 rounded-lg transition 
+              ${theme === 'dark' 
+                ? 'bg-[#d7a86e] text-[var(--background)] hover:bg-[#c7925c]' 
+                : 'bg-[#c7925c] text-[#ffffff] hover:bg-[#af8154]'
+              }`}
           >
             <User size={18} />
             <span className="hidden md:inline">Perfil</span>

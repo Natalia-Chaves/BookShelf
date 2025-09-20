@@ -90,9 +90,8 @@ export default function BibliotecaPage({ theme }) {
     <main className="mx-auto px-4 py-8 bg-[var(--main-background)] min-h-screen">
       <h2
         className="text-3xl font-bold text-center mb-6"
-   
       >
-        Sua Biblioteca de Livros 
+        Sua Biblioteca de Livros
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">

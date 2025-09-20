@@ -9,18 +9,30 @@
   --main-background: #512b1e;
   --form-background: #D9B9A0;
   --title-color: #6e3b1f;
-  
 }
 
 /* ======== LIGHT MODE VIA CLASSE ======== */
 .light {
-  --background: #e7cfbb;
-  --foreground: #a06433;
-  --text-primary: #512b1e;
+  /* Fundo da Navbar, Footer e do corpo */
+  --background: #d7a86e; 
+  
+  /* Cor dos ícones, texto principal e logos */
+  --foreground: #3e2723;
+  
+  /* Cor principal de texto, usado em links e botões */
+  --text-primary: #3e2723;
+  
+  /* Cor dos divisores e bordas */
   --divider-color: #a58b75;
-  --main-background: #D9B9A0;
+  
+  /* Fundo da área de conteúdo principal (cards, etc) */
+  --main-background: #d7a86e;
+  
+  /* Fundo dos campos de formulário e áreas de busca */
   --form-background: #f5e6d5;
   
+  /* Cor para títulos, como "Sua Biblioteca de Livros" */
+  --title-color: #512b1e;
 }
 
 /* ======== BODY ======== */
@@ -39,7 +51,7 @@ body {
 header,
 footer {
   background-color: var(--background);
-  color: var(--text-primary);
+  color: var(--foreground); /* Use a cor de foreground para o texto */
   overflow: hidden;
 }
 
@@ -54,7 +66,7 @@ footer {
 /* ======== MAIN ======== */
 main {
   background-color: var(--main-background);
-  color: var(--text-primary);
+  color: var(--foreground); /* Use a cor de foreground para o texto */
   display: grid;
   height: 90%;
   place-items: center;
