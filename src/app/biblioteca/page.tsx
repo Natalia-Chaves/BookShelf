@@ -13,21 +13,38 @@ export default function BibliotecaPage() {
     initialBooks.map((book, index) => ({ ...book, id: index + 1 }))
   );
   const [showAddForm, setShowAddForm] = useState(false);
+  const [bookToEdit, setBookToEdit] = useState(null);
   const [bookToDelete, setBookToDelete] = useState(null);
 
-  // === Funções de Adicionar ===
+  // === Funções de Adicionar/Editar ===
   const handleShowAddForm = () => {
     setShowAddForm(true);
   };
 
-  const handleSaveBook = (newBook) => {
-    const newBookWithId = { ...newBook, id: Date.now() };
-    setAllBooks([newBookWithId, ...allBooks]);
+  const handleEditBook = (book) => {
+    setBookToEdit(book);
+  };
+
+  const handleSaveBook = (updatedBook) => {
+    if (updatedBook.id) {
+      // Modo de edição
+      const updatedBooks = allBooks.map(book => 
+        book.id === updatedBook.id ? updatedBook : book
+      );
+      setAllBooks(updatedBooks);
+    } else {
+      // Modo de adicionar
+      const newBookWithId = { ...updatedBook, id: Date.now() };
+      setAllBooks([newBookWithId, ...allBooks]);
+    }
+    // Fechar os modais
     setShowAddForm(false);
+    setBookToEdit(null);
   };
 
   const handleCancelForm = () => {
     setShowAddForm(false);
+    setBookToEdit(null);
   };
 
   // === Funções de Excluir ===
@@ -56,6 +73,7 @@ export default function BibliotecaPage() {
           <BookCard 
             key={book.id} 
             book={book} 
+            onEdit={handleEditBook} 
             onDelete={handleDeleteBook} 
           />
         ))}
@@ -73,6 +91,14 @@ export default function BibliotecaPage() {
 
       {showAddForm && (
         <AddBookForm 
+          onSave={handleSaveBook} 
+          onCancel={handleCancelForm} 
+        />
+      )}
+
+      {bookToEdit && (
+        <AddBookForm 
+          bookToEdit={bookToEdit} 
           onSave={handleSaveBook} 
           onCancel={handleCancelForm} 
         />

@@ -1,7 +1,7 @@
 // src/components/BookCard.tsx
-import { Eye, Trash2 } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 
-export default function BookCard({ book, onDelete }) {
+export default function BookCard({ book, onEdit, onDelete }) {
   const { title, author, imageUrl } = book;
 
   return (
@@ -26,6 +26,13 @@ export default function BookCard({ book, onDelete }) {
             aria-label="Visualizar livro"
           >
             <Eye size={16} />
+          </button>
+          <button
+            onClick={() => onEdit(book)}
+            className="p-1.5 rounded-full bg-[#A0522D] text-white hover:bg-[#8B4513] transition-colors"
+            aria-label="Editar livro"
+          >
+            <Pencil size={16} />
           </button>
           <button
             onClick={() => onDelete(book)}

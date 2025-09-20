@@ -7,17 +7,17 @@ export const books = [
   {
     title: "A Revolução dos Bichos",
     author: "George Orwell",
-    imageUrl: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1327958614i/170448.jpg"
+    imageUrl: "https://m.media-amazon.com/images/I/91BsZhxCRjL._UF1000,1000_QL80_.jpg"
   },
   {
     title: "1984",
     author: "George Orwell",
-    imageUrl: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1532594582i/409614.jpg"
+    imageUrl: "https://m.media-amazon.com/images/I/61t0bwt1s3L.jpg"
   },
   {
     title: "Duna",
     author: "Frank Herbert",
-    imageUrl: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1485303681i/234225.jpg"
+    imageUrl: "https://m.media-amazon.com/images/I/81SPvywH9sL._UF1000,1000_QL80_.jpg"
   },
   {
     title: "O Pequeno Príncipe",
@@ -27,12 +27,12 @@ export const books = [
   {
     title: "Sapiens: Uma Breve História da Humanidade",
     author: "Yuval Noah Harari",
-    imageUrl: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1449090159i/23692271.jpg"
+    imageUrl: "https://m.media-amazon.com/images/I/81BTkpMrLYL.jpg"
   },
   {
     title: "A Guerra dos Tronos",
     author: "George R.R. Martin",
-    imageUrl: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1435213609i/13496.jpg"
+    imageUrl: "https://m.media-amazon.com/images/I/91+1SUO3vUL.jpg"
   },
   {
     title: "Harry Potter e a Pedra Filosofal",

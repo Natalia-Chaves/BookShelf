@@ -4,18 +4,19 @@
 import { useState } from "react";
 import { X, Book, Image as ImageIcon, PenTool } from "lucide-react";
 
-export default function AddBookForm({ onSave, onCancel }) {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+export default function AddBookForm({ bookToEdit, onSave, onCancel }) {
+  const [title, setTitle] = useState(bookToEdit?.title || "");
+  const [author, setAuthor] = useState(bookToEdit?.author || "");
+  const [imageUrl, setImageUrl] = useState(bookToEdit?.imageUrl || "");
+
+  const isEditing = !!bookToEdit;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title || !author || !imageUrl) return;
 
-    // Apenas adiciona um novo livro, sem lógica de edição
     onSave({ 
-      id: Date.now(),
+      id: bookToEdit?.id,
       title, 
       author, 
       imageUrl 
@@ -38,7 +39,7 @@ export default function AddBookForm({ onSave, onCancel }) {
           <X size={24} />
         </button>
         <h2 className="text-2xl font-bold text-[#6F4E37] mb-6 text-center">
-          Adicionar Novo Livro
+          {isEditing ? "Editar Livro" : "Adicionar Novo Livro"}
         </h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex items-center gap-3 bg-[#EFEAE4] p-3 rounded-lg">
@@ -78,7 +79,7 @@ export default function AddBookForm({ onSave, onCancel }) {
             type="submit"
             className="w-full bg-[#A0522D] text-white font-semibold py-3 rounded-lg mt-4 hover:bg-[#8B4513] transition-colors"
           >
-            Adicionar Livro
+            {isEditing ? "Salvar Alterações" : "Adicionar Livro"}
           </button>
         </form>
       </div>
