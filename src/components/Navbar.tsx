@@ -101,7 +101,10 @@ export default function Navbar({ theme, toggleTheme }) {
 
         {/* Perfil + Toggle */}
         <div className="ml-4 flex items-center gap-3">
-          <button className="flex items-center gap-2 bg-[#d7a86e] text-[var(--background)] px-4 py-2 rounded-lg hover:bg-[#c7925c] transition">
+          <button
+            onClick={() => router.push('/perfil')}
+            className="flex items-center gap-2 bg-[#d7a86e] text-[var(--background)] px-4 py-2 rounded-lg hover:bg-[#c7925c] transition"
+          >
             <User size={18} />
             <span className="hidden md:inline">Perfil</span>
           </button>
@@ -112,7 +115,6 @@ export default function Navbar({ theme, toggleTheme }) {
             className="flex items-center justify-center w-10 h-10 rounded-lg bg-[var(--form-background)] text-[#d7a86e] hover:opacity-80 transition"
           >
             {theme === "dark" ? <Moon size={18} /> : <Sun size={18} />}
-
           </button>
         </div>
       </div>
