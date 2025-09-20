@@ -3,7 +3,7 @@
 import React from 'react'; // Arquivo de estilização
 
 // O componente recebe os dados do livro através de "props"
-const Card = ({ titulo, autor }) => {
+const Card = ({ titulo, autor }): React.JSX.Element => {
   return (
     <div className="card-container">
       <h3>{titulo}</h3>

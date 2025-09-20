@@ -26,8 +26,8 @@ export default function Navbar() {
         {/* Links */}
         <div className="hidden md:flex gap-8 text-sm font-medium">
           <a href="biblioteca" className="hover:text-[#d7a86e] transition">Minha Biblioteca</a>
-          <a href="Explorar" className="hover:text-[#d7a86e] transition">Explorar</a>
-          <a href="Categorias" className="hover:text-[#d7a86e] transition">Categorias</a>
+          <a href="explorar" className="hover:text-[#d7a86e] transition">Explorar</a>
+          <a href="categorias" className="hover:text-[#d7a86e] transition">Categorias</a>
         </div>
 
         {/* Search */}
@@ -60,8 +60,8 @@ export default function Navbar() {
       {/* Mobile menu */}
       <div className="md:hidden flex justify-around bg-[#5d4037] py-2">
         <a href="biblioteca"><Library size={22} className="text-[#d7a86e]" /></a>
-        <a href="#"><Search size={22} className="text-[#d7a86e]" /></a>
-        <a href="#"><User size={22} className="text-[#d7a86e]" /></a>
+        <a href="explorar"><Search size={22} className="text-[#d7a86e]" /></a>
+        <a href="perfil"><User size={22} className="text-[#d7a86e]" /></a>
       </div>
     </nav>
   );
