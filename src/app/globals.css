@@ -1,72 +1,82 @@
 @import "tailwindcss";
 
-/* ======== CORES PRINCIPAIS ======== */
-
+/* ======== CORES PRINCIPAIS (DEFAULT: DARK) ======== */
 :root {
---background: #422718;
---foreground: #ededed;
---text-primary: #ffffff;
---divider-color: #A56734;
---main-background: #512b1e;
---form-background: #D9B9A0;
+  --background: #422718;
+  --foreground: #ededed;
+  --text-primary: #ffffff;
+  --divider-color: #A56734;
+  --main-background: #512b1e;
+  --form-background: #D9B9A0;
+  --title-color: #6e3b1f;
+  
+}
+
+/* ======== LIGHT MODE VIA CLASSE ======== */
+.light {
+  --background: #e7cfbb;
+  --foreground: #a06433;
+  --text-primary: #512b1e;
+  --divider-color: #a58b75;
+  --main-background: #D9B9A0;
+  --form-background: #f5e6d5;
+  
 }
 
 /* ======== BODY ======== */
 body {
-background: var(--background);
-color: var(--foreground);
-font-family: Arial, Helvetica, sans-serif;
-margin: 0;
-padding: 0;
-min-height: 100vh;
-display: flex;
-flex-direction: column;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ======== HEADER & FOOTER ======== */
 header,
 footer {
-background-color: var(--background);
-color: var(--text-primary);
-overflow: hidden;
-
+  background-color: var(--background);
+  color: var(--text-primary);
+  overflow: hidden;
 }
 
 header {
-border-bottom: 1px solid var(--divider-color);
+  border-bottom: 1px solid var(--divider-color);
 }
 
 footer {
-border-top: 1px solid var(--divider-color);
+  border-top: 1px solid var(--divider-color);
 }
 
 /* ======== MAIN ======== */
 main {
-background-color: var(--main-background);
-color: var(--text-primary);
-display:grid;
-height: 90%;
-place-items: center;
-flex: 1;
+  background-color: var(--main-background);
+  color: var(--text-primary);
+  display: grid;
+  height: 90%;
+  place-items: center;
+  flex: 1;
 }
 
-/* ======== THEME ======== */
+/* ======== THEME (NÃO ALTERAR AQUI) ======== */
 @theme inline {
---color-background: var(--background);
---color-foreground: var(--foreground);
---font-sans: var(--font-geist-sans);
---font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
-/* ======== DARK MODE ======== */
+/* ======== DARK MODE (FALLBACK) ======== */
 @media (prefers-color-scheme: dark) {
-:root {
---background: #422718;
---foreground: #ededed;
---text-primary: #ffffff;
---divider-color: #A56734;
---main-background: #512b1e;
---form-background: #D9B9A0;
+  :root:not(.light) {
+    --background: #422718;
+    --foreground: #ededed;
+    --text-primary: #ffffff;
+    --divider-color: #A56734;
+    --main-background: #512b1e;
+    --form-background: #A56734;
+  }
 }
-}
-
