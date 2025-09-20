@@ -69,10 +69,20 @@ export default function BibliotecaPage() {
     setBookToDelete(null);
   };
 
-  const filteredBooks = allBooks.filter(book =>
-    book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    book.author.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredBooks = allBooks.filter(book => {
+    const term = searchTerm.toLowerCase();
+    
+    // Certifica-se de que book.genres existe antes de tentar acessá-lo
+    const genreMatch = Array.isArray(book.genres) && book.genres.some(genre => 
+      genre.toLowerCase().includes(term)
+    );
+
+    return (
+      book.title.toLowerCase().includes(term) ||
+      book.author.toLowerCase().includes(term) ||
+      genreMatch
+    );
+  });
 
   return (
     <main className="mx-auto px-4 py-8 bg-[#6F4E37] min-h-screen">

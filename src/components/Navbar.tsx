@@ -1,14 +1,23 @@
 // src/components/Navbar.tsx
 "use client";
 import { useEffect, useState } from "react";
-import { BookOpen, Search, Library, User, Sun, Moon } from "lucide-react";
+import { BookOpen, Search, Library, User, Sun, Moon, Filter } from "lucide-react";
 import { useRouter, useSearchParams } from 'next/navigation';
+
+const ALL_GENRES = ["Fantasia", "Fábula", "Sátira", "Distopia", "Ficção Científica", "Aventura", "Clássico", "Política", "Épico", "Infantil", "Filosofia", "Não-Ficção", "História", "Antropologia", "Jovem Adulto"];
+const ALL_YEARS = ["1950", "1960", "2000", "2010"];
 
 export default function Navbar() {
   const [theme, setTheme] = useState("dark");
+  const [showFilters, setShowFilters] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState(searchParams.get('busca') || '');
+  
+  const currentSearchTerm = searchParams.get('busca') || '';
+  const currentGenre = searchParams.get('genero') || '';
+  const currentYear = searchParams.get('ano') || '';
+
+  const [searchTerm, setSearchTerm] = useState(currentSearchTerm);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -27,11 +36,21 @@ export default function Navbar() {
     } else {
       params.delete('busca');
     }
-    router.push(`?${params.toString()}`, { scroll: false });
+    router.push(`/biblioteca?${params.toString()}`, { scroll: false });
+  };
+  
+  const handleFilter = (type, value) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (searchParams.get(type) === value) {
+        params.delete(type);
+    } else {
+        params.set(type, value);
+    }
+    router.push(`/biblioteca?${params.toString()}`, { scroll: false });
   };
 
   return (
-    <nav className="w-full bg-[#3b221c] text-[#ededed] shadow-lg">
+    <nav className="w-full bg-[#3b221c] text-[#ededed] shadow-lg relative">
       <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center gap-2">
@@ -47,7 +66,7 @@ export default function Navbar() {
         </div>
 
         {/* Search */}
-        <div className="flex items-center bg-[#5d4037] rounded-lg px-3 py-2 w-48 md:w-64">
+        <div className="relative flex items-center bg-[#5d4037] rounded-lg px-3 py-2 w-48 md:w-64">
           <Search size={18} className="text-[#d7a86e]" />
           <input
             type="text"
@@ -56,6 +75,38 @@ export default function Navbar() {
             onChange={handleSearch}
             className="bg-transparent w-full px-2 text-sm focus:outline-none placeholder-[#d7a86e]"
           />
+          <button onClick={() => setShowFilters(!showFilters)} className="text-[#d7a86e] hover:text-white ml-2">
+            <Filter size={18} />
+          </button>
+
+          {showFilters && (
+            <div className="absolute top-12 left-0 w-64 bg-[#5d4037] rounded-lg p-4 shadow-lg z-50">
+                <h4 className="text-sm font-bold mb-2 text-[#d7a86e]">Gêneros</h4>
+                <div className="flex flex-wrap gap-2 mb-4">
+                    {ALL_GENRES.map(genre => (
+                        <button
+                            key={genre}
+                            onClick={() => handleFilter('genero', genre)}
+                            className={`px-3 py-1 text-xs rounded-full transition ${currentGenre === genre ? 'bg-[#d7a86e] text-[#3b221c]' : 'bg-[#3b221c] text-white hover:bg-[#8b4513]'}`}
+                        >
+                            {genre}
+                        </button>
+                    ))}
+                </div>
+                <h4 className="text-sm font-bold mb-2 text-[#d7a86e]">Anos</h4>
+                <div className="flex flex-wrap gap-2">
+                    {ALL_YEARS.map(year => (
+                        <button
+                            key={year}
+                            onClick={() => handleFilter('ano', year)}
+                            className={`px-3 py-1 text-xs rounded-full transition ${currentYear === year ? 'bg-[#d7a86e] text-[#3b221c]' : 'bg-[#3b221c] text-white hover:bg-[#8b4513]'}`}
+                        >
+                            {year}
+                        </button>
+                    ))}
+                </div>
+            </div>
+          )}
         </div>
 
         {/* Perfil + Toggle */}
