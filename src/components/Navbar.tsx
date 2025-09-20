@@ -1,9 +1,14 @@
+// src/components/Navbar.tsx
 "use client";
 import { useEffect, useState } from "react";
 import { BookOpen, Search, Library, User, Sun, Moon } from "lucide-react";
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function Navbar() {
   const [theme, setTheme] = useState("dark");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('busca') || '');
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -13,10 +18,21 @@ export default function Navbar() {
     setTheme(theme === "dark" ? "light" : "dark");
   };
 
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    const params = new URLSearchParams(searchParams.toString());
+    if (value) {
+      params.set('busca', value);
+    } else {
+      params.delete('busca');
+    }
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
+
   return (
     <nav className="w-full bg-[#3b221c] text-[#ededed] shadow-lg">
       <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-
         {/* Logo */}
         <div className="flex items-center gap-2">
           <BookOpen size={28} className="text-[#d7a86e]" href="/" onClick={() => {}} />
@@ -25,9 +41,9 @@ export default function Navbar() {
 
         {/* Links */}
         <div className="hidden md:flex gap-8 text-sm font-medium">
-          <a href="biblioteca" className="hover:text-[#d7a86e] transition">Minha Biblioteca</a>
-          <a href="explorar" className="hover:text-[#d7a86e] transition">Explorar</a>
-          <a href="categorias" className="hover:text-[#d7a86e] transition">Categorias</a>
+          <a href="/biblioteca" className="hover:text-[#d7a86e] transition">Minha Biblioteca</a>
+          <a href="/explorar" className="hover:text-[#d7a86e] transition">Explorar</a>
+          <a href="/categorias" className="hover:text-[#d7a86e] transition">Categorias</a>
         </div>
 
         {/* Search */}
@@ -36,6 +52,8 @@ export default function Navbar() {
           <input
             type="text"
             placeholder="Buscar livros..."
+            value={searchTerm}
+            onChange={handleSearch}
             className="bg-transparent w-full px-2 text-sm focus:outline-none placeholder-[#d7a86e]"
           />
         </div>
@@ -59,9 +77,9 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       <div className="md:hidden flex justify-around bg-[#5d4037] py-2">
-        <a href="biblioteca"><Library size={22} className="text-[#d7a86e]" /></a>
-        <a href="explorar"><Search size={22} className="text-[#d7a86e]" /></a>
-        <a href="perfil"><User size={22} className="text-[#d7a86e]" /></a>
+        <a href="/biblioteca"><Library size={22} className="text-[#d7a86e]" /></a>
+        <a href="/explorar"><Search size={22} className="text-[#d7a86e]" /></a>
+        <a href="/perfil"><User size={22} className="text-[#d7a86e]" /></a>
       </div>
     </nav>
   );
