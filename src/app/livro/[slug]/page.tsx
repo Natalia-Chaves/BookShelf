@@ -30,14 +30,30 @@ export default function BookDetailPage({ params }: BookDetailPageProps) {
     // 3. Renderiza os detalhes (Componente de Servidor)
     // Usamos o '!' (non-null assertion) nos acessos ao 'book' após a verificação 'if (!book)'
     return (
-        <div className="container mx-auto px-4 py-12 min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+        <div 
+            className="container mx-auto px-4 py-12 min-h-screen"
+            style={{ 
+                backgroundColor: 'var(--background)',
+                color: 'var(--foreground)'
+            }}
+        >
             
             {/* Botão de Voltar */}
-            <a href="/biblioteca" className="flex items-center text-sm font-medium mb-8 text-blue-600 hover:underline">
+            <a 
+                href="/biblioteca" 
+                className="flex items-center text-sm font-medium mb-8 hover:underline"
+                style={{ color: 'var(--text-primary)' }}
+            >
                 &larr; Voltar para a Biblioteca
             </a>
 
-            <div className="flex flex-col md:flex-row gap-10 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+            <div 
+                className="flex flex-col md:flex-row gap-10 p-8 rounded-xl shadow-lg"
+                style={{ 
+                    backgroundColor: 'var(--form-background)',
+                    color: 'var(--title-color)'
+                }}
+            >
                 
                 {/* Imagem */}
                 <div className="flex-shrink-0 w-full md:w-1/3">
@@ -50,24 +66,55 @@ export default function BookDetailPage({ params }: BookDetailPageProps) {
 
                 {/* Detalhes e Sinopse */}
                 <div className="flex-grow">
-                    <h1 className="text-4xl font-extrabold mb-3 text-red-600 dark:text-red-400">
+                    <h1 
+                        className="text-4xl font-extrabold mb-3" 
+                        style={{ color: 'var(--title-color)' }}
+                    >
                         {book!.title}
                     </h1>
-                    <p className="text-xl italic mb-6 text-gray-600 dark:text-gray-400">
+                    <p 
+                        className="text-xl italic mb-6" 
+                        style={{ color: 'var(--title-color)' }}
+                    >
                         Por: {book!.author}
                     </p>
 
-                    <h2 className="text-2xl font-bold mb-3 mt-8">Sinopse</h2>
-                    <p className="text-lg leading-relaxed mb-6">
+                    <h2 
+                        className="text-2xl font-bold mb-3 mt-8"
+                        style={{ color: 'var(--title-color)' }}
+                    >
+                        Sinopse
+                    </h2>
+                    <p 
+                        className="text-lg leading-relaxed mb-6"
+                        style={{ color: 'var(--title-color)' }}
+                    >
                         {book!.description || "Ainda não há uma sinopse detalhada para este livro."}
                     </p>
 
-                    <h3 className="text-lg font-semibold mb-2">Informações Adicionais</h3>
+                    <h3 
+                        className="text-lg font-semibold mb-2"
+                        style={{ color: 'var(--title-color)' }}
+                    >
+                        Informações Adicionais
+                    </h3>
                     <div className="flex flex-wrap gap-4 text-sm">
-                        <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full">
+                        <span 
+                            className="px-3 py-1 rounded-full"
+                            style={{ 
+                                backgroundColor: 'var(--divider-color)',
+                                color: 'var(--foreground)'
+                            }}
+                        >
                             Ano: {book!.year || 'N/A'}
                         </span>
-                        <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
+                        <span 
+                            className="px-3 py-1 rounded-full"
+                            style={{ 
+                                backgroundColor: 'var(--divider-color)',
+                                color: 'var(--foreground)'
+                            }}
+                        >
                             Gênero: {book!.genres?.join(', ') || 'Não Classificado'}
                         </span>
                     </div>
