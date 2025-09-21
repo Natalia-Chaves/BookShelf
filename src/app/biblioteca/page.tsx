@@ -15,8 +15,14 @@ import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
 
 import { books as initialBooks } from "@/lib/books";
 
+import type { Book } from "@/types";
 
-export default function BibliotecaPage({ theme }) {
+
+interface BibliotecaPageProps {
+  theme: { [key: string]: string };
+}
+
+export default function BibliotecaPage({ theme }: BibliotecaPageProps) {
 
   const [allBooks, setAllBooks] = useState(() => {
 
@@ -35,9 +41,9 @@ export default function BibliotecaPage({ theme }) {
 
   const [showAddForm, setShowAddForm] = useState(false);
 
-  const [bookToEdit, setBookToEdit] = useState(null);
+  const [bookToEdit, setBookToEdit] = useState<Book | null>(null);
 
-  const [bookToDelete, setBookToDelete] = useState(null);
+  const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
 
 
   const searchParams = useSearchParams();
@@ -63,18 +69,18 @@ export default function BibliotecaPage({ theme }) {
   };
 
 
-  const handleEditBook = (book) => {
+  const handleEditBook = (book: Book) => {
 
     setBookToEdit(book);
 
   };
 
 
-  const handleSaveBook = (updatedBook) => {
+  const handleSaveBook = (updatedBook: Book) => {
 
     if (updatedBook.id) {
 
-      const updatedBooks = allBooks.map(book =>
+      const updatedBooks = allBooks.map((book: Book) =>
 
         book.id === updatedBook.id ? updatedBook : book
 
@@ -106,7 +112,7 @@ export default function BibliotecaPage({ theme }) {
   };
 
 
-  const handleDeleteBook = (book) => {
+  const handleDeleteBook = (book: Book) => {
 
     setBookToDelete(book);
 
@@ -114,13 +120,15 @@ export default function BibliotecaPage({ theme }) {
 
 
   const handleConfirmDelete = () => {
+    if (!bookToDelete) { 
+        return; 
+    } 
 
-    const updatedBooks = allBooks.filter(book => book.id !== bookToDelete.id);
+    const updatedBooks = allBooks.filter((book: Book) => book.id !== bookToDelete.id);
 
     setAllBooks(updatedBooks);
 
     setBookToDelete(null);
-
   };
 
 
@@ -131,11 +139,11 @@ export default function BibliotecaPage({ theme }) {
   };
 
 
-  const filteredBooks = allBooks.filter(book => {
+  const filteredBooks = allBooks.filter((book: Book) => {
 
     const term = searchTerm.toLowerCase();
 
-    const genreMatch = book.genres?.some(genre =>
+    const genreMatch = book.genres?.some((genre: string) =>
 
       genre.toLowerCase().includes(term)
 
@@ -174,7 +182,7 @@ export default function BibliotecaPage({ theme }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
 
-        {filteredBooks.map((book) => (
+        {filteredBooks.map((book: Book) => (
 
           <BookCard
 

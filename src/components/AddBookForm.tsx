@@ -4,14 +4,23 @@
 import { useState } from "react";
 import { X, Book, Image as ImageIcon, PenTool } from "lucide-react";
 
-export default function AddBookForm({ bookToEdit, onSave, onCancel }) {
+interface AddBookFormProps {
+  bookToEdit?: {
+    id: string;
+    title: string;
+    author: string;
+    imageUrl: string;
+  };
+}
+
+export default function AddBookForm({ bookToEdit, onSave, onCancel }: AddBookFormProps & { onSave: (book: { id?: string; title: string; author: string; imageUrl: string; }) => void; onCancel: () => void; }) {
   const [title, setTitle] = useState(bookToEdit?.title || "");
   const [author, setAuthor] = useState(bookToEdit?.author || "");
   const [imageUrl, setImageUrl] = useState(bookToEdit?.imageUrl || "");
 
   const isEditing = !!bookToEdit;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!title || !author || !imageUrl) return;
 

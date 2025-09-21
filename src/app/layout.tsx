@@ -1,20 +1,32 @@
 'use client';
 
-import { useState, useEffect, Children, cloneElement } from 'react';
+import {
+  useState,
+  useEffect,
+  Children,
+  cloneElement,
+  ReactNode,
+  ReactElement,
+} from 'react';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
+// Props que o Layout global recebe
+interface RootLayoutProps {
+  children: ReactNode;
+}
 
-export default function RootLayout({ children }) {
-  const [theme, setTheme] = useState('dark');
+// Caso queira tipar as páginas que recebem `theme`:
+type PageWithTheme = ReactElement<{ theme: 'dark' | 'light' }>;
 
-  
+export default function RootLayout({ children }: RootLayoutProps) {
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   // Recupera o tema salvo no localStorage
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
+    if (savedTheme === 'dark' || savedTheme === 'light') {
       setTheme(savedTheme);
     }
   }, []);
@@ -26,7 +38,7 @@ export default function RootLayout({ children }) {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(current => (current === 'dark' ? 'light' : 'dark'));
+    setTheme((current) => (current === 'dark' ? 'light' : 'dark'));
   };
 
   return (
@@ -34,10 +46,10 @@ export default function RootLayout({ children }) {
       <body className="flex flex-col min-h-screen">
         <Navbar theme={theme} toggleTheme={toggleTheme} />
         <div className="flex-grow">
-          {Children.map(children, child => {
-            // Clona o elemento filho e adiciona a prop 'theme'
-            if (child) {
-              return cloneElement(child, { theme });
+          {Children.map(children, (child) => {
+            // Garante que é um elemento React antes de clonar
+            if (child && typeof child === 'object' && 'props' in child) {
+              return cloneElement(child as PageWithTheme, { theme });
             }
             return child;
           })}
