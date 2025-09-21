@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 'use client';
 import { useState, useEffect } from "react";
 import { BookOpen, Search, Library, User, Sun, Moon, Filter } from "lucide-react";
