@@ -54,8 +54,6 @@ export default function Navbar({ theme, toggleTheme }: NavbarProps) {
 
         <div className="hidden md:flex gap-8 text-sm font-medium">
           <a href="/catalogo" className="hover:text-[var(--primary)] transition">Catálogo</a>
-          <a href="/explorar" className="hover:text-[var(--primary)] transition">Explorar</a>
-          <a href="/categorias" className="hover:text-[var(--primary)] transition">Categorias</a>
         </div>
 
         {/* Lógica de busca, se aplicável */}

@@ -69,7 +69,11 @@ export default function CatalogoPage() {
 
   return (
     <main className="mx-auto px-4 py-8 bg-[var(--main-background)] min-h-screen">
-      <h2 className="text-3xl font-bold text-center mb-6">Catálogo de Livros</h2>
+      <h2 className="text-3xl font-bold text-center mb-2">Catálogo de Livros</h2>
+     <p className="text-center mb-6" style={{ color: "var(--text-primary)" }}>
+  Total de livros: <span className="font-semibold">{allBooks.length}</span>
+</p>
+
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {filteredBooks.map(book => (
