@@ -1,51 +1,68 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import BookCard from './BookCard';
-import AddBookForm from './AddBookForm'; // seu formulário de adicionar/editar
+import AddBookForm from './AddBookForm';
+import EditBookForm from './EditBookForm';
 import type { Book } from '@/types';
 import { initialBooks } from '@/lib/books';
 
 export default function BookList() {
   const [books, setBooks] = useState<Book[]>(initialBooks);
-  const [bookToEdit, setBookToEdit] = useState<Book | null>(null);
-  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [bookBeingEdited, setBookBeingEdited] = useState<Book | null>(null);
 
-  const handleEdit = (book: Book) => {
-    setBookToEdit(book);
-    setIsFormOpen(true);  // Abre o formulário
+  // Adicionar novo livro
+  const handleAddClick = () => {
+    setShowAddForm(true);
+    setBookBeingEdited(null); // garante que não está editando
   };
 
+  // Editar livro existente
+  const handleEdit = (book: Book) => {
+    setBookBeingEdited(book);
+    setShowAddForm(false); // fecha o addForm, se estiver aberto
+  };
+
+  // Excluir livro
   const handleDelete = (book: Book) => {
     setBooks(prev => prev.filter(b => b.id !== book.id));
   };
 
-  const handleSave = (book: Book) => {
+  // Avaliar livro com estrelas
+  const handleRate = (book: Book, rating: number) => {
+    setBooks(prev =>
+      prev.map(b => (b.id === book.id ? { ...b, rating } : b))
+    );
+  };
+
+  // Salvar novo ou editar existente
+  const handleSaveBook = (book: Book) => {
     setBooks(prev => {
       const exists = prev.find(b => b.id === book.id);
       if (exists) {
+        // Atualizar
         return prev.map(b => (b.id === book.id ? book : b));
       } else {
+        // Adicionar
         return [...prev, book];
       }
     });
-    setIsFormOpen(false);
-    setBookToEdit(null);
+
+    setShowAddForm(false);
+    setBookBeingEdited(null);
   };
 
-  const handleCancel = () => {
-    setIsFormOpen(false);
-    setBookToEdit(null);
+  const handleCancelForm = () => {
+    setShowAddForm(false);
+    setBookBeingEdited(null);
   };
 
   return (
-    <div>
+    <div className="p-4">
       <button
-        className="mb-4 px-4 py-2 bg-blue-600 text-white rounded"
-        onClick={() => {
-          setBookToEdit(null);
-          setIsFormOpen(true);
-        }}
+        onClick={handleAddClick}
+        className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
       >
         Adicionar Livro
       </button>
@@ -57,20 +74,25 @@ export default function BookList() {
             book={book}
             onEdit={handleEdit}
             onDelete={handleDelete}
-            onRate={(book, rating) => {
-              setBooks(prev =>
-                prev.map(b => (b.id === book.id ? { ...b, rating } : b))
-              );
-            }}
+            onRate={handleRate}
           />
         ))}
       </div>
 
-      {isFormOpen && (
+      {/* Formulário de adicionar livro */}
+      {showAddForm && !bookBeingEdited && (
         <AddBookForm
-          bookToEdit={bookToEdit}
-          onSave={handleSave}
-          onCancel={handleCancel}
+          onSave={handleSaveBook}
+          onCancel={handleCancelForm}
+        />
+      )}
+
+      {/* Formulário de editar livro */}
+      {bookBeingEdited && (
+        <EditBookForm
+          book={bookBeingEdited}
+          onSave={handleSaveBook}
+          onCancel={handleCancelForm}
         />
       )}
     </div>

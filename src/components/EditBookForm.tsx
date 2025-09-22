@@ -1,34 +1,32 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import type { Book } from '@/types';
 
-interface AddBookFormProps {
-  bookToEdit?: Book | null;
+interface EditBookFormProps {
+  book: Book;
   onSave: (book: Book) => void;
   onCancel: () => void;
 }
 
-export default function AddBookForm({ bookToEdit = null, onSave, onCancel }: AddBookFormProps) {
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [cover, setCover] = useState('');
-  const [genre, setGenre] = useState('');
-  const [year, setYear] = useState<number | ''>('');
-  const [pages, setPages] = useState<number | ''>('');
-  const [synopsis, setSynopsis] = useState('');
+export default function EditBookForm({ book, onSave, onCancel }: EditBookFormProps) {
+  const [title, setTitle] = useState(book.title);
+  const [author, setAuthor] = useState(book.author);
+  const [cover, setCover] = useState(book.cover || '');
+  const [genre, setGenre] = useState(book.genre || '');
+  const [year, setYear] = useState<number | ''>(book.year ?? '');
+  const [pages, setPages] = useState<number | ''>(book.pages ?? '');
+  const [synopsis, setSynopsis] = useState(book.synopsis || '');
 
   useEffect(() => {
-    if (bookToEdit) {
-      setTitle(bookToEdit.title || '');
-      setAuthor(bookToEdit.author || '');
-      setCover(bookToEdit.cover || '');
-      setGenre(bookToEdit.genre || '');
-      setYear(bookToEdit.year ?? '');
-      setPages(bookToEdit.pages ?? '');
-      setSynopsis(bookToEdit.synopsis || '');
-    }
-  }, [bookToEdit]);
+    setTitle(book.title || '');
+    setAuthor(book.author || '');
+    setCover(book.cover || '');
+    setGenre(book.genre || '');
+    setYear(book.year ?? '');
+    setPages(book.pages ?? '');
+    setSynopsis(book.synopsis || '');
+  }, [book]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,8 +36,8 @@ export default function AddBookForm({ bookToEdit = null, onSave, onCancel }: Add
       return;
     }
 
-    const newBook: Book = {
-      id: bookToEdit?.id || Date.now().toString() + Math.random().toString(36).slice(2),
+    const updatedBook: Book = {
+      ...book,
       title: title.trim(),
       author: author.trim(),
       cover: cover.trim(),
@@ -47,10 +45,9 @@ export default function AddBookForm({ bookToEdit = null, onSave, onCancel }: Add
       year: typeof year === 'number' ? year : undefined,
       pages: typeof pages === 'number' ? pages : undefined,
       synopsis: synopsis.trim() || '',
-      rating: bookToEdit?.rating ?? 0,
     };
 
-    onSave(newBook);
+    onSave(updatedBook);
   };
 
   return (
@@ -59,9 +56,7 @@ export default function AddBookForm({ bookToEdit = null, onSave, onCancel }: Add
         onSubmit={handleSubmit}
         className="bg-[var(--form-background)] text-[var(--foreground)] p-6 rounded-lg shadow-xl w-96 max-w-full space-y-4"
       >
-        <h2 className="text-2xl font-semibold text-center">
-          {bookToEdit ? 'Editar Livro' : 'Adicionar Livro'}
-        </h2>
+        <h2 className="text-2xl font-semibold text-center">Editar Livro</h2>
 
         <input
           type="text"

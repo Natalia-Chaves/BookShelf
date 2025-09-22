@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
-import { useSearchParams } from 'next/navigation';
 
 import BookCard from "@/components/BookCard";
 import AddBookForm from "@/components/AddBookForm";
+import EditBookForm from "@/components/EditBookForm";
 import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
 
 import { initialBooks } from "@/lib/books";
@@ -19,7 +19,7 @@ export default function CatalogoPage() {
     }
     return initialBooks.map(book => ({
       ...book,
-      id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
+      id: book.id || Date.now().toString() + Math.random().toString(36).substring(2, 9),
       rating: book.rating ?? 0,
       synopsis: book.synopsis ?? '',
     }));
@@ -29,90 +29,88 @@ export default function CatalogoPage() {
   const [bookToEdit, setBookToEdit] = useState<Book | null>(null);
   const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
 
-  const searchParams = useSearchParams();
-  const searchTerm = searchParams.get('busca')?.toLowerCase() || '';
-  const filterGenre = searchParams.get('genero') || '';
-  const filterYear = searchParams.get('ano') || '';
-
   useEffect(() => {
     localStorage.setItem('myBooks', JSON.stringify(allBooks));
   }, [allBooks]);
 
-  const handleShowAddForm = () => setShowAddForm(true);
+  // Abrir form de adicionar livro
+  const handleShowAddForm = () => {
+    setBookToEdit(null);
+    setShowAddForm(true);
+  };
 
-  const handleEditBook = (book: Book) => setBookToEdit(book);
+  // Abrir form de editar livro
+  const handleEditBook = (book: Book) => {
+    setBookToEdit(book);
+    setShowAddForm(false);
+  };
 
-  const handleSaveBook = (updatedBook: Book) => {
-    const original = initialBooks.find(b => b.id === updatedBook.id);
-
-    const completedBook: Book = {
-      ...original,
-      ...updatedBook,
-      synopsis: updatedBook.synopsis ?? original?.synopsis ?? '',
-    };
-
-    if (updatedBook.id && allBooks.some(b => b.id === updatedBook.id)) {
-      setAllBooks(allBooks.map(b => b.id === updatedBook.id ? completedBook : b));
+  // Salvar livro (novo ou editado)
+  const handleSaveBook = (book: Book) => {
+    if (bookToEdit) {
+      // Atualiza livro existente
+      setAllBooks(prev =>
+        prev.map(b => (b.id === book.id ? book : b))
+      );
     } else {
-      setAllBooks([
-        { ...completedBook, id: Date.now().toString() + Math.random().toString(36).substring(2, 9) },
-        ...allBooks
-      ]);
+      // Adiciona novo livro com id único
+      const newBook = {
+        ...book,
+        id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
+        rating: book.rating ?? 0,
+        synopsis: book.synopsis ?? '',
+      };
+      setAllBooks(prev => [newBook, ...prev]);
     }
-
     setShowAddForm(false);
     setBookToEdit(null);
   };
 
+  // Cancelar forms
   const handleCancelForm = () => {
     setShowAddForm(false);
     setBookToEdit(null);
   };
 
-  const handleDeleteBook = (book: Book) => setBookToDelete(book);
+  // Excluir livro
+  const handleDeleteBook = (book: Book) => {
+    setBookToDelete(book);
+  };
   const handleConfirmDelete = () => {
     if (!bookToDelete) return;
-    setAllBooks(allBooks.filter(book => book.id !== bookToDelete.id));
+    setAllBooks(prev => prev.filter(b => b.id !== bookToDelete.id));
     setBookToDelete(null);
   };
-  const handleCancelDelete = () => setBookToDelete(null);
+  const handleCancelDelete = () => {
+    setBookToDelete(null);
+  };
 
+  // Avaliar livro
   const handleRateBook = (book: Book, rating: number) => {
-    setAllBooks(prevBooks =>
-      prevBooks.map(b => b.id === book.id ? { ...b, rating } : b)
+    setAllBooks(prev =>
+      prev.map(b => (b.id === book.id ? { ...b, rating } : b))
     );
   };
 
-  const filteredBooks = allBooks.filter(book => {
-    const titleMatch = book.title.toLowerCase().includes(searchTerm);
-    const authorMatch = book.author.toLowerCase().includes(searchTerm);
-    const genreMatch = book.genre?.toLowerCase().includes(searchTerm) || false;
-    const genreFilter = filterGenre ? book.genre === filterGenre : true;
-    const yearFilter = filterYear ? book.year?.toString() === filterYear : true;
-    return (titleMatch || authorMatch || genreMatch) && genreFilter && yearFilter;
-  });
-
   return (
-    <main
-      className="mx-auto px-4 py-8 bg-[var(--main-background)] overflow-auto"
-      style={{ maxHeight: 'calc(100vh - 64px)', marginTop: '64px' }}
-    >
+    <main className="mx-auto px-4 py-8 bg-[var(--main-background)] min-h-screen" style={{ marginTop: '64px' }}>
       <h2 className="text-3xl font-bold text-center mb-2">Catálogo de Livros</h2>
       <p className="text-center mb-6" style={{ color: "var(--text-primary)" }}>
         Total de livros: <span className="font-semibold">{allBooks.length}</span>
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {filteredBooks.map(book => (
-          <BookCard 
-            key={book.id} 
-            book={book} 
-            onEdit={handleEditBook} 
-            onDelete={handleDeleteBook} 
+        {allBooks.map(book => (
+          <BookCard
+            key={book.id}
+            book={book}
+            onEdit={handleEditBook}
+            onDelete={handleDeleteBook}
             onRate={handleRateBook}
           />
         ))}
 
+        {/* Botão + para adicionar livro */}
         <div className="flex items-center justify-center p-4">
           <button
             onClick={handleShowAddForm}
@@ -124,7 +122,24 @@ export default function CatalogoPage() {
         </div>
       </div>
 
-      {showAddForm && <AddBookForm onSave={handleSaveBook} onCancel={handleCancelForm} bookToEdit={bookToEdit} />}
+      {/* Formulário de adicionar livro */}
+      {showAddForm && !bookToEdit && (
+        <AddBookForm
+          onSave={handleSaveBook}
+          onCancel={handleCancelForm}
+        />
+      )}
+
+      {/* Formulário de editar livro */}
+      {bookToEdit && (
+        <EditBookForm
+          book={bookToEdit}
+          onSave={handleSaveBook}
+          onCancel={handleCancelForm}
+        />
+      )}
+
+      {/* Modal confirmação de exclusão */}
       {bookToDelete && (
         <DeleteConfirmationModal
           book={bookToDelete}
