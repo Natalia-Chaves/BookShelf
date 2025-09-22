@@ -1,37 +1,61 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { books as initialBooks } from '@/lib/books';
+import { initialBooks } from '@/lib/books';
 import type { Book } from '@/types';
 
-// Função para gerar slug do título
 const createSlug = (title: string): string => {
   return title
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s-]/g, '') // Remove pontuações
-    .replace(/[\s_-]+/g, '-') // Substitui espaços e underlines por hífen
-    .replace(/^-+|-+$/g, ''); // Remove hífens extras no começo/fim
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 };
 
 export default function BookDetailPage() {
-  const params = useParams();
-  const { slug } = params;
+  const { slug } = useParams() as { slug: string };
 
   const [book, setBook] = useState<Book | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedBooks =
-      typeof window !== 'undefined' ? localStorage.getItem('myBooks') : null;
+  const load = () => {
+    let parsedBooks: Book[] = initialBooks;
 
-    const parsedBooks: Book[] = storedBooks
-      ? JSON.parse(storedBooks)
-      : initialBooks;
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('myBooks');
+      if (stored) {
+        try {
+          const storedBooks = JSON.parse(stored) as Partial<Book>[];
 
-    const found = parsedBooks.find((b) => createSlug(b.title) === slug);
+          
+        } catch (err) {
+          console.error('Erro JSON.parse localBooks:', err);
+          parsedBooks = initialBooks;
+        }
+      }
+    }
+
+    const found = parsedBooks.find(b => createSlug(b.title) === slug);
+
     setBook(found || null);
-  }, [slug]);
+    setLoading(false);
+  };
+
+  load();
+}, [slug]);
+
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <p>Carregando livro...</p>
+      </div>
+    );
+  }
 
   if (!book) {
     return (
@@ -62,7 +86,6 @@ export default function BookDetailPage() {
         color: 'var(--foreground)',
       }}
     >
-      {/* Link de volta */}
       <a
         href="/catalogo"
         className="flex items-center text-sm font-medium mb-8 hover:underline"
@@ -71,7 +94,6 @@ export default function BookDetailPage() {
         &larr; Voltar para o Catálogo
       </a>
 
-      {/* Card do Livro */}
       <div
         className="flex flex-col md:flex-row gap-10 p-8 rounded-xl shadow-lg"
         style={{
@@ -84,41 +106,24 @@ export default function BookDetailPage() {
           <img
             src={book.cover || book.imageUrl}
             alt={`Capa do livro ${book.title}`}
-            className="w-full h-auto object-cover rounded-lg shadow-2xl"
+            className="w-full h-auto object-cover rounded-lg shadow-lg"
           />
         </div>
 
-        {/* Informações */}
+        {/* Detalhes */}
         <div className="flex-grow">
           <h1 className="text-4xl font-extrabold mb-2">{book.title}</h1>
           <p className="text-lg font-medium mb-4">por {book.author}</p>
 
-          <div className="text-sm mb-4">
-            {book.genre && (
-              <p>
-                <strong>Gênero:</strong> {book.genre}
-              </p>
-            )}
-            {book.year && (
-              <p>
-                <strong>Ano:</strong> {book.year}
-              </p>
-            )}
-            {book.pages && (
-              <p>
-                <strong>Páginas:</strong> {book.pages}
-              </p>
-            )}
-            {book.rating && (
-              <p>
-                <strong>Avaliação:</strong> {book.rating} / 5
-              </p>
-            )}
+          <div className="text-sm mb-4 space-y-1">
+            {book.genre && <p><strong>Gênero:</strong> {book.genre}</p>}
+            {book.year && <p><strong>Ano:</strong> {book.year}</p>}
+            {book.pages && <p><strong>Páginas:</strong> {book.pages}</p>}
+            <p><strong>Avaliação:</strong> {book.rating} / 5</p>
           </div>
-
           {book.synopsis && (
-            <div className="text-base leading-relaxed mt-4">
-              <h2 className="text-lg font-semibold mb-2">Sinopse</h2>
+            <div className="mt-6">
+              <h2 className="text-2xl font-semibold mb-2">Sinopse</h2>
               <p>{book.synopsis}</p>
             </div>
           )}

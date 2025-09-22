@@ -8,17 +8,20 @@ import BookCard from "@/components/BookCard";
 import AddBookForm from "@/components/AddBookForm";
 import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
 
-import { books as initialBooks } from "@/lib/books";
+import { initialBooks } from "@/lib/books";
 import type { Book } from "@/types";
 
 export default function CatalogoPage() {
   const [allBooks, setAllBooks] = useState<Book[]>(() => {
-    const savedBooks = typeof window !== 'undefined' ? localStorage.getItem('myBooks') : null;
-    if (savedBooks) return JSON.parse(savedBooks);
+    if (typeof window !== 'undefined') {
+      const savedBooks = localStorage.getItem('myBooks');
+      if (savedBooks) return JSON.parse(savedBooks);
+    }
     return initialBooks.map(book => ({
       ...book,
       id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
-      rating: book.rating ?? 0, // garantir que tenha rating
+      rating: book.rating ?? 0,
+      synopsis: book.synopsis ?? '',
     }));
   });
 
@@ -40,14 +43,23 @@ export default function CatalogoPage() {
   const handleEditBook = (book: Book) => setBookToEdit(book);
 
   const handleSaveBook = (updatedBook: Book) => {
+    const original = initialBooks.find(b => b.id === updatedBook.id);
+
+    const completedBook: Book = {
+      ...original,
+      ...updatedBook,
+      synopsis: updatedBook.synopsis ?? original?.synopsis ?? '',
+    };
+
     if (updatedBook.id && allBooks.some(b => b.id === updatedBook.id)) {
-      setAllBooks(allBooks.map(b => b.id === updatedBook.id ? updatedBook : b));
+      setAllBooks(allBooks.map(b => b.id === updatedBook.id ? completedBook : b));
     } else {
       setAllBooks([
-        { ...updatedBook, id: Date.now().toString() + Math.random().toString(36).substring(2, 9) },
+        { ...completedBook, id: Date.now().toString() + Math.random().toString(36).substring(2, 9) },
         ...allBooks
       ]);
     }
+
     setShowAddForm(false);
     setBookToEdit(null);
   };
@@ -112,11 +124,10 @@ export default function CatalogoPage() {
         </div>
       </div>
 
-      {showAddForm && <AddBookForm onSave={handleSaveBook} onCancel={handleCancelForm} />}
-      {bookToEdit && <AddBookForm bookToEdit={bookToEdit} onSave={handleSaveBook} onCancel={handleCancelForm} />}
+      {showAddForm && <AddBookForm onSave={handleSaveBook} onCancel={handleCancelForm} bookToEdit={bookToEdit} />}
       {bookToDelete && (
         <DeleteConfirmationModal
-          bookTitle={bookToDelete.title}
+          book={bookToDelete}
           onConfirm={handleConfirmDelete}
           onCancel={handleCancelDelete}
         />

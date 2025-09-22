@@ -1,6 +1,6 @@
 import type { Book } from "@/types";
 
-export const books: Book[] = [
+export const initialBooks: Book[] = [
   {
     id: "1",
     title: "O Senhor dos Anéis",
@@ -10,7 +10,8 @@ export const books: Book[] = [
     pages: 1216,
     rating: 5,
     synopsis: "Uma jornada épica pela Terra Média para destruir o Um Anel.",
-    cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1566425108i/33.jpg"
+    cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1566425108i/33.jpg",
+    imageUrl: undefined
   },
   {
     id: "2",
@@ -21,7 +22,8 @@ export const books: Book[] = [
     pages: 152,
     rating: 4,
     synopsis: "Uma fábula política sobre animais que se rebelam contra os humanos.",
-    cover: "https://m.media-amazon.com/images/I/91BsZhxCRjL._UF1000,1000_QL80_.jpg"
+    cover: "https://m.media-amazon.com/images/I/91BsZhxCRjL._UF1000,1000_QL80_.jpg",
+    imageUrl: undefined
   },
   {
     id: "3",
@@ -32,7 +34,8 @@ export const books: Book[] = [
     pages: 328,
     rating: 5,
     synopsis: "Em um regime totalitário, um homem luta contra a vigilância e o controle absoluto.",
-    cover: "https://m.media-amazon.com/images/I/61t0bwt1s3L._UF1000,1000_QL80_.jpg"
+    cover: "https://m.media-amazon.com/images/I/61t0bwt1s3L._UF1000,1000_QL80_.jpg",
+    imageUrl: undefined
   },
   {
     id: "4",
@@ -43,7 +46,8 @@ export const books: Book[] = [
     pages: 688,
     rating: 5,
     synopsis: "A luta pelo controle de um planeta desértico rico em especiarias.",
-    cover: "https://m.media-amazon.com/images/I/81zN7udGRUL.jpg"
+    cover: "https://m.media-amazon.com/images/I/81zN7udGRUL.jpg",
+    imageUrl: undefined
   },
   {
     id: "5",
@@ -54,7 +58,8 @@ export const books: Book[] = [
     pages: 96,
     rating: 4,
     synopsis: "Um piloto encontra um pequeno príncipe vindo de outro planeta.",
-    cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1367545443i/157993.jpg"
+    cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1367545443i/157993.jpg",
+    imageUrl: undefined
   },
   {
     id: "6",
@@ -65,7 +70,8 @@ export const books: Book[] = [
     pages: 464,
     rating: 5,
     synopsis: "Uma análise profunda da história da humanidade, da pré-história à era moderna.",
-    cover: "https://m.media-amazon.com/images/I/81BTkpMrLYL.jpg"
+    cover: "https://m.media-amazon.com/images/I/81BTkpMrLYL.jpg",
+    imageUrl: undefined
   },
   {
     id: "7",
@@ -76,7 +82,8 @@ export const books: Book[] = [
     pages: 592,
     rating: 5,
     synopsis: "Nobres disputam o trono de ferro em um mundo medieval cheio de intrigas e traições.",
-    cover: "https://m.media-amazon.com/images/I/91+1SUO3vUL.jpg"
+    cover: "https://m.media-amazon.com/images/I/91+1SUO3vUL.jpg",
+    imageUrl: undefined
   },
   {
     id: "8",
@@ -87,6 +94,7 @@ export const books: Book[] = [
     pages: 223,
     rating: 5,
     synopsis: "Um jovem bruxo descobre seu passado e começa sua jornada na Escola de Magia de Hogwarts.",
-    cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1474154022i/3.jpg"
+    cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1474154022i/3.jpg",
+    imageUrl: undefined
   }
 ];
