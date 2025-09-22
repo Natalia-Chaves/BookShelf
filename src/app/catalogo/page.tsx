@@ -17,7 +17,8 @@ export default function CatalogoPage() {
     if (savedBooks) return JSON.parse(savedBooks);
     return initialBooks.map(book => ({
       ...book,
-      id: Date.now().toString() + Math.random().toString(36).substring(2, 9)
+      id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
+      rating: book.rating ?? 0, // garantir que tenha rating
     }));
   });
 
@@ -64,6 +65,12 @@ export default function CatalogoPage() {
   };
   const handleCancelDelete = () => setBookToDelete(null);
 
+  const handleRateBook = (book: Book, rating: number) => {
+    setAllBooks(prevBooks =>
+      prevBooks.map(b => b.id === book.id ? { ...b, rating } : b)
+    );
+  };
+
   const filteredBooks = allBooks.filter(book => {
     const titleMatch = book.title.toLowerCase().includes(searchTerm);
     const authorMatch = book.author.toLowerCase().includes(searchTerm);
@@ -85,7 +92,13 @@ export default function CatalogoPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {filteredBooks.map(book => (
-          <BookCard key={book.id} book={book} onEdit={handleEditBook} onDelete={handleDeleteBook} />
+          <BookCard 
+            key={book.id} 
+            book={book} 
+            onEdit={handleEditBook} 
+            onDelete={handleDeleteBook} 
+            onRate={handleRateBook}
+          />
         ))}
 
         <div className="flex items-center justify-center p-4">

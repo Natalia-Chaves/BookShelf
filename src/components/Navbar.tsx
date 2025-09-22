@@ -67,7 +67,7 @@ export default function Navbar({ theme, toggleTheme }: NavbarProps) {
           <div className="md:hidden">
             <a
               href="/catalogo"
-              className="p-2 rounded-lg hover:bg-[var(--form-background)] transition"
+              className="p-2 rounded-lg"
               aria-label="Ir para o Catálogo"
             >
               <Library size={20} />

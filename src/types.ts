@@ -8,4 +8,5 @@ export interface Book {
   rating?: number;
   synopsis?: string;
   cover?: string;
+  ratings?: number[];
 }

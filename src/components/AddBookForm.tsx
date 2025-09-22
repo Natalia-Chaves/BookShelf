@@ -29,47 +29,61 @@ export default function AddBookForm({ bookToEdit = null, onSave, onCancel }: Add
       title,
       author,
       imageUrl,
-      genres: bookToEdit?.genres,
-      year: bookToEdit?.year,
+      genres: bookToEdit?.genres || [],
+      year: bookToEdit?.year || new Date().getFullYear(),
     };
     onSave(book);
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-md w-80">
-        <h2 className="text-xl font-bold mb-4">{bookToEdit ? 'Editar Livro' : 'Adicionar Livro'}</h2>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-[var(--form-background)] text-[var(--foreground)] p-6 rounded-lg shadow-xl w-80 max-w-full"
+      >
+        <h2 className="text-2xl font-semibold mb-5 text-center">
+          {bookToEdit ? 'Editar Livro' : 'Adicionar Livro'}
+        </h2>
 
         <input
           type="text"
           placeholder="Título"
           value={title}
           onChange={e => setTitle(e.target.value)}
-          className="w-full mb-3 p-2 border rounded"
+          className="w-full mb-4 px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
           required
         />
+
         <input
           type="text"
           placeholder="Autor"
           value={author}
           onChange={e => setAuthor(e.target.value)}
-          className="w-full mb-3 p-2 border rounded"
+          className="w-full mb-4 px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
           required
         />
+
         <input
           type="text"
           placeholder="URL da imagem"
           value={imageUrl}
           onChange={e => setImageUrl(e.target.value)}
-          className="w-full mb-3 p-2 border rounded"
+          className="w-full mb-6 px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
           required
         />
 
-        <div className="flex justify-end gap-2">
-          <button type="button" onClick={onCancel} className="px-3 py-1 bg-gray-300 rounded">
+        <div className="flex justify-end gap-3">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-4 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-white transition"
+          >
             Cancelar
           </button>
-          <button type="submit" className="px-3 py-1 bg-green-500 text-white rounded">
+          <button
+            type="submit"
+            className="px-4 py-2 rounded-lg bg-[var(--primary)] hover:brightness-90 text-white font-semibold transition"
+          >
             Salvar
           </button>
         </div>
