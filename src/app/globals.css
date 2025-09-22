@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+
+
+
 /* ======== CORES PRINCIPAIS (DEFAULT: DARK) ======== */
 :root {
   --background: #422718;
@@ -34,6 +37,7 @@
   /* Cor para títulos, como "Sua Biblioteca de Livros" */
   --title-color: #512b1e;
 }
+
 
 /* ======== BODY ======== */
 body {

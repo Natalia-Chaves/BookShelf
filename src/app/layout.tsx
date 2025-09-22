@@ -1,60 +1,51 @@
 'use client';
 
-import {
-  useState,
-  useEffect,
-  Children,
-  cloneElement,
-  ReactNode,
-  ReactElement,
-} from 'react';
+import { useState, useEffect, ReactNode } from 'react';
+import { Inter } from 'next/font/google';
 import './globals.css';
+import { AuthProvider } from '@/contexts/AuthContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
-// Props que o Layout global recebe
-interface RootLayoutProps {
+const inter = Inter({ subsets: ['latin'] });
+
+export default function RootLayout({
+  children,
+}: {
   children: ReactNode;
-}
+}) {
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
 
-// Caso queira tipar as páginas que recebem `theme`:
-type PageWithTheme = ReactElement<{ theme: 'dark' | 'light' }>;
-
-export default function RootLayout({ children }: RootLayoutProps) {
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-
-  // Recupera o tema salvo no localStorage
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark' || savedTheme === 'light') {
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    if (savedTheme) {
       setTheme(savedTheme);
     }
   }, []);
 
-  // Aplica/remove a classe `.light` no <html> e salva o tema
-  useEffect(() => {
-    document.documentElement.classList.toggle('light', theme === 'light');
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
   const toggleTheme = () => {
-    setTheme((current) => (current === 'dark' ? 'light' : 'dark'));
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
   };
 
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
+  }, [theme]);
+
   return (
-    <html lang="pt-BR">
-      <body className="flex flex-col min-h-screen">
-        <Navbar theme={theme} toggleTheme={toggleTheme} />
-        <div className="flex-grow">
-          {Children.map(children, (child) => {
-            // Garante que é um elemento React antes de clonar
-            if (child && typeof child === 'object' && 'props' in child) {
-              return cloneElement(child as PageWithTheme, { theme });
-            }
-            return child;
-          })}
-        </div>
-        <Footer />
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body className={`${inter.className} flex flex-col min-h-screen`} suppressHydrationWarning>
+        <AuthProvider>
+          <Navbar theme={theme} toggleTheme={toggleTheme} />
+          {/* A tag 'main' aqui não precisa de classes, pois o CSS global já cuida dela */}
+          <main>
+            {children}
+          </main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );
