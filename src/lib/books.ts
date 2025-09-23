@@ -1,5 +1,3 @@
-import type { Book } from "@/types";
-
 export const initialBooks: Book[] = [
   {
     id: "1",
@@ -8,10 +6,12 @@ export const initialBooks: Book[] = [
     genre: "Fantasia",
     year: 1954,
     pages: 1216,
+    pagesRead: 300,
+    status: "lendo",
     rating: 5,
     synopsis: "Uma jornada épica pela Terra Média para destruir o Um Anel.",
     cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1566425108i/33.jpg",
-    imageUrl: undefined
+    imageUrl: undefined,
   },
   {
     id: "2",
@@ -20,6 +20,8 @@ export const initialBooks: Book[] = [
     genre: "Distopia",
     year: 1945,
     pages: 152,
+    pagesRead: 152,
+    status: "finalizado",
     rating: 4,
     synopsis: "Uma fábula política sobre animais que se rebelam contra os humanos.",
     cover: "https://m.media-amazon.com/images/I/91BsZhxCRjL._UF1000,1000_QL80_.jpg",
@@ -32,6 +34,8 @@ export const initialBooks: Book[] = [
     genre: "Ficção Científica",
     year: 1949,
     pages: 328,
+    pagesRead: 328,
+    status: "finalizado",
     rating: 5,
     synopsis: "Em um regime totalitário, um homem luta contra a vigilância e o controle absoluto.",
     cover: "https://m.media-amazon.com/images/I/61t0bwt1s3L._UF1000,1000_QL80_.jpg",
@@ -44,6 +48,8 @@ export const initialBooks: Book[] = [
     genre: "Ficção Científica",
     year: 1965,
     pages: 688,
+    pagesRead: 100,
+    status: "lendo",
     rating: 5,
     synopsis: "A luta pelo controle de um planeta desértico rico em especiarias.",
     cover: "https://m.media-amazon.com/images/I/81zN7udGRUL.jpg",
@@ -56,6 +62,8 @@ export const initialBooks: Book[] = [
     genre: "Fábula",
     year: 1943,
     pages: 96,
+    pagesRead: 96,
+    status: "finalizado",
     rating: 4,
     synopsis: "Um piloto encontra um pequeno príncipe vindo de outro planeta.",
     cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1367545443i/157993.jpg",
@@ -68,6 +76,8 @@ export const initialBooks: Book[] = [
     genre: "Não-Ficção",
     year: 2011,
     pages: 464,
+    pagesRead: 200,
+    status: "lendo",
     rating: 5,
     synopsis: "Uma análise profunda da história da humanidade, da pré-história à era moderna.",
     cover: "https://m.media-amazon.com/images/I/81BTkpMrLYL.jpg",
@@ -80,6 +90,8 @@ export const initialBooks: Book[] = [
     genre: "Fantasia",
     year: 1996,
     pages: 592,
+    pagesRead: 0,
+    status: "quero ler",
     rating: 5,
     synopsis: "Nobres disputam o trono de ferro em um mundo medieval cheio de intrigas e traições.",
     cover: "https://m.media-amazon.com/images/I/91+1SUO3vUL.jpg",
@@ -90,11 +102,13 @@ export const initialBooks: Book[] = [
     title: "Harry Potter e a Pedra Filosofal",
     author: "J.K. Rowling",
     genre: "Fantasia",
-    year: 1997,
+     year: 1997,
     pages: 223,
+    pagesRead: 223,
+    status: "finalizado",
     rating: 5,
     synopsis: "Um jovem bruxo descobre seu passado e começa sua jornada na Escola de Magia de Hogwarts.",
     cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1474154022i/3.jpg",
     imageUrl: undefined
-  }
+  }
 ];

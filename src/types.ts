@@ -9,4 +9,6 @@ export interface Book {
   rating?: number;
   synopsis?: string;
   cover?: string;
+  pagesRead?: number;
+  status?: 'lendo' | 'finalizado' | 'quero ler';
 }
