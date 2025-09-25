@@ -1,15 +1,10 @@
-/* eslint-disable @next/next/no-html-link-for-pages */
 'use client';
-import { BookOpen, Search, User, Sun, Moon, LogOut, Library } from "lucide-react";
+import { BookOpen, Search, User, LogOut, Library } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { ThemeToggle } from "@/components/theme-toggle"; // Importe o novo componente de tema
 
-interface NavbarProps {
-  theme: 'light' | 'dark';
-  toggleTheme: () => void;
-}
-
-export default function Navbar({ theme, toggleTheme }: NavbarProps) {
+export default function Navbar() { // Remova os props 'theme' e 'toggleTheme'
   const pathname = usePathname();
   const { isAuthenticated, logout, user } = useAuth();
 
@@ -20,7 +15,7 @@ export default function Navbar({ theme, toggleTheme }: NavbarProps) {
     if (!user || !user.name) return 'Perfil';
     return user.name.split(' ')[0];
   };
-  
+
   if (isAuthPage) {
     return (
       <nav className="w-full bg-[var(--background)] text-[var(--foreground)] relative">
@@ -39,7 +34,7 @@ export default function Navbar({ theme, toggleTheme }: NavbarProps) {
 
   return (
     <nav className="w-full bg-[var(--card-background)] text-[var(--foreground)] shadow-lg relative">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center h-16">
+      <div className="max-w-6xl mx-auto px-4 py-3 flex justify-center items-center h-16">
         {/* Logo esquerda */}
         <a
           href="/catalogo"
@@ -64,13 +59,18 @@ export default function Navbar({ theme, toggleTheme }: NavbarProps) {
 
         {/* Desktop: catálogo texto + busca centralizados */}
         <div className="hidden md:flex flex-1 justify-center items-center gap-6">
+          <a href="/dashboard" className="text-sm font-medium hover:text-[var(--primary)] transition">
+            Dashboard
+          </a>
           <a
             href="/catalogo"
- className="text-sm font-medium hover:text-[var(--primary)] transition"
+            className="text-sm font-medium hover:text-[var(--primary)] transition"
           >
             Catálogo
           </a>
-
+          <a href="/novidades" className="text-sm font-medium hover:text-[var(--primary)] transition">
+            Novidades
+          </a>
           {isCatalogPage && (
             <div className="relative items-center bg-[var(--form-background)] rounded-lg px-3 py-2 w-64 flex">
               <input
@@ -102,19 +102,13 @@ export default function Navbar({ theme, toggleTheme }: NavbarProps) {
               >
                 <LogOut size={18} />
               </button>
-</>
+            </>
           )}
 
           {/* Toggle tema extrema direita */}
-          <button
-            onClick={toggleTheme}
-            className="w-10 h-10 flex items-center justify-center rounded-lg bg-[var(--form-background)] text-[var(--primary)] hover:opacity-80 transition"
-            aria-label="Alternar tema"
-          >
-            {theme === "dark" ? <Moon size={18} /> : <Sun size={18} />}
-          </button>
+          <ThemeToggle />
         </div>
       </div>
-    </nav>
-  );
+    </nav>
+  );
 }
