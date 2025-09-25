@@ -1,10 +1,11 @@
+// components/Navbar.tsx
 'use client';
 import { BookOpen, Search, User, LogOut, Library } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "@/components/theme-toggle"; // Importe o novo componente de tema
 
-export default function Navbar() { // Remova os props 'theme' e 'toggleTheme'
+export default function Navbar() {
   const pathname = usePathname();
   const { isAuthenticated, logout, user } = useAuth();
 
@@ -47,28 +48,28 @@ export default function Navbar() { // Remova os props 'theme' e 'toggleTheme'
         {/* Mobile: ícones Library e Search centralizados */}
         <div className="flex flex-1 justify-center gap-6 md:hidden">
           <a href="/catalogo" aria-label="Catálogo">
-            <Library size={24} />
+            <Library size={28} />
           </a>
           <button
             aria-label="Buscar"
             className="p-1"
           >
-            <Search size={24} />
+            <Search size={28} />
           </button>
         </div>
 
         {/* Desktop: catálogo texto + busca centralizados */}
         <div className="hidden md:flex flex-1 justify-center items-center gap-6">
-          <a href="/dashboard" className="text-sm font-medium hover:text-[var(--primary)] transition">
+          <a href="/dashboard" className="text-lg font-medium hover:text-[var(--primary)] transition">
             Dashboard
           </a>
           <a
             href="/catalogo"
-            className="text-sm font-medium hover:text-[var(--primary)] transition"
+            className="text-lg font-medium hover:text-[var(--primary)] transition"
           >
             Catálogo
           </a>
-          <a href="/novidades" className="text-sm font-medium hover:text-[var(--primary)] transition">
+          <a href="/novidades" className="text-lg font-medium hover:text-[var(--primary)] transition">
             Novidades
           </a>
           {isCatalogPage && (
@@ -76,9 +77,9 @@ export default function Navbar() { // Remova os props 'theme' e 'toggleTheme'
               <input
                 type="text"
                 placeholder="Buscar..."
-                className="bg-transparent outline-none w-full text-sm"
+                className="bg-transparent outline-none w-full text-base"
               />
-              <Search size={18} className="ml-2 text-[var(--primary)]" />
+              <Search size={20} className="ml-2 text-[var(--primary)]" />
             </div>
           )}
         </div>
@@ -92,15 +93,15 @@ export default function Navbar() { // Remova os props 'theme' e 'toggleTheme'
                 href="/perfil"
                 className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--form-background)] hover:opacity-80 transition"
               >
-                <User size={18} />
-                <span>{getFirstName()}</span>
+                <User size={20} />
+                <span className="text-base">{getFirstName()}</span>
               </a>
               <button
                 onClick={logout}
                 className="w-10 h-10 flex items-center justify-center rounded-lg bg-[var(--form-background)] hover:opacity-80 transition"
                 aria-label="Sair da conta"
               >
-                <LogOut size={18} />
+                <LogOut size={20} />
               </button>
             </>
           )}
