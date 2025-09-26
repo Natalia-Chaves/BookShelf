@@ -1,0 +1,11 @@
+export interface Book {
+  id: string;
+  title: string;
+  author: string;
+  genre?: string;
+  year?: number;
+  pages?: number;
+  synopsis?: string;
+  rating?: number;
+  cover?: string;
+}
