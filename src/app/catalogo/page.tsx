@@ -93,7 +93,8 @@ export default function CatalogoPage() {
   };
 
   return (
-    <main className="mx-auto px-4 py-8 bg-[var(--main-background)] min-h-screen" style={{ marginTop: '64px' }}>
+    <main className="mx-auto px-4 bg-[var(--main-background)] min-h-screen pb-20">
+
       <h2 className="text-3xl font-bold text-center mb-2">Catálogo de Livros</h2>
       <p className="text-center mb-6" style={{ color: "var(--text-primary)" }}>
         Total de livros: <span className="font-semibold">{allBooks.length}</span>

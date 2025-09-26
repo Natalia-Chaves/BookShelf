@@ -1,100 +1,41 @@
-'use client';
+// app/components/BookList.tsx
+import BookListClient from "./BookListClient";
+import type { Book } from "@/types";
 
-import { useState } from 'react';
-import BookCard from './BookCard';
-import AddBookForm from './AddBookForm';
-import EditBookForm from './EditBookForm';
-import type { Book } from '@/types';
-import { initialBooks } from '@/lib/books';
+// Simulação de busca de livros (substitua por fetch de banco de dados ou API)
+async function fetchBooks(): Promise<Book[]> {
+  return [
+    {
+      id: "1",
+      title: "O Senhor dos Anéis",
+      author: "J.R.R. Tolkien",
+      imageUrl: "/images/senhor-dos-aneis.jpg",
+      cover: "/images/senhor-dos-aneis.jpg",
+      genre: "Fantasia",
+      year: 1954,
+      pages: 1178,
+      rating: 5,
+      synopsis: "Uma jornada épica pela Terra Média para destruir o Um Anel.",
+      status: "lendo",
+      pagesRead: 200,
+    },
+    {
+      id: "2",
+      title: "1984",
+      author: "George Orwell",
+      imageUrl: "/images/1984.jpg",
+      cover: "/images/1984.jpg",
+      genre: "Distopia",
+      year: 1949,
+      pages: 328,
+      rating: 4,
+      synopsis: "Um regime totalitário controla tudo e todos.",
+      status: "quero ler",
+    },
+  ];
+}
 
-export default function BookList() {
-  const [books, setBooks] = useState<Book[]>(initialBooks);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [bookBeingEdited, setBookBeingEdited] = useState<Book | null>(null);
-
-  // Adicionar novo livro
-  const handleAddClick = () => {
-    setShowAddForm(true);
-    setBookBeingEdited(null); // garante que não está editando
-  };
-
-  // Editar livro existente
-  const handleEdit = (book: Book) => {
-    setBookBeingEdited(book);
-    setShowAddForm(false); // fecha o addForm, se estiver aberto
-  };
-
-  // Excluir livro
-  const handleDelete = (book: Book) => {
-    setBooks(prev => prev.filter(b => b.id !== book.id));
-  };
-
-  // Avaliar livro com estrelas
-  const handleRate = (book: Book, rating: number) => {
-    setBooks(prev =>
-      prev.map(b => (b.id === book.id ? { ...b, rating } : b))
-    );
-  };
-
-  // Salvar novo ou editar existente
-  const handleSaveBook = (book: Book) => {
-    setBooks(prev => {
-      const exists = prev.find(b => b.id === book.id);
-      if (exists) {
-        // Atualizar
-        return prev.map(b => (b.id === book.id ? book : b));
-      } else {
-        // Adicionar
-        return [...prev, book];
-      }
-    });
-
-    setShowAddForm(false);
-    setBookBeingEdited(null);
-  };
-
-  const handleCancelForm = () => {
-    setShowAddForm(false);
-    setBookBeingEdited(null);
-  };
-
-  return (
-    <div className="p-4">
-      <button
-        onClick={handleAddClick}
-        className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        Adicionar Livro
-      </button>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {books.map(book => (
-          <BookCard
-            key={book.id}
-            book={book}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onRate={handleRate}
-          />
-        ))}
-      </div>
-
-      {/* Formulário de adicionar livro */}
-      {showAddForm && !bookBeingEdited && (
-        <AddBookForm
-          onSave={handleSaveBook}
-          onCancel={handleCancelForm}
-        />
-      )}
-
-      {/* Formulário de editar livro */}
-      {bookBeingEdited && (
-        <EditBookForm
-          book={bookBeingEdited}
-          onSave={handleSaveBook}
-          onCancel={handleCancelForm}
-        />
-      )}
-    </div>
-  );
+export default async function BookList() {
+  const books = await fetchBooks();
+  return <BookListClient initialBooks={books} />;
 }

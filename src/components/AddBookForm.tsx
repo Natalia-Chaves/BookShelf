@@ -125,13 +125,16 @@ export default function AddBookForm({ bookToEdit = null, onSave, onCancel }: Add
         />
 
         <div className="flex justify-end gap-3">
+          {/* Botão Cancelar corrigido */}
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-white transition"
+            className="px-4 py-2 rounded-lg bg-[var(--divider-color)] text-[var(--foreground)] hover:brightness-110 transition"
           >
             Cancelar
           </button>
+
+          {/* Botão Salvar (mantido com base na variável --primary) */}
           <button
             type="submit"
             className="px-4 py-2 rounded-lg bg-[var(--primary)] hover:brightness-90 text-white font-semibold transition"

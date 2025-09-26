@@ -1,9 +1,10 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 // components/Navbar.tsx
 'use client';
 import { BookOpen, Search, User, LogOut, Library } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { ThemeToggle } from "@/components/theme-toggle"; // Importe o novo componente de tema
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Navbar() {
   const pathname = usePathname();

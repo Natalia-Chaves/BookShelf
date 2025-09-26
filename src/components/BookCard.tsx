@@ -31,16 +31,18 @@ export default function BookCard({ book, onEdit, onDelete, onRate }: BookCardPro
     onRate(book, newRating);
   };
 
+  const coverSrc = cover || imageUrl || '/images/default-cover.jpg';
+
   return (
     <div className="bg-[#EFEAE4] rounded-lg shadow-md overflow-hidden transform transition-all duration-300 hover:scale-105 flex flex-col h-full">
 
       {/* Link para detalhes do livro */}
       <Link href={`/livro/${bookSlug}`} className="flex flex-col h-full cursor-pointer">
-        <div className="relative w-full h-80 p-4 flex items-center justify-center bg-gray-200">
+        <div className="relative w-full aspect-[2/3] p-4 flex items-center justify-center bg-gray-200">
           <img
-            src={cover || imageUrl}
+            src={coverSrc}
             alt={`Capa do livro ${title}`}
-            className="max-w-full max-h-full object-contain"
+            className="w-full h-full object-contain"
           />
         </div>
         <div className="p-4 flex flex-col items-center text-center flex-grow justify-between">
