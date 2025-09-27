@@ -1,8 +1,8 @@
 'use client';
+
 import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabaseClient';
 
 interface LoginFormProps {
   isDark: boolean;
@@ -27,19 +27,9 @@ export default function LoginForm({ isDark }: LoginFormProps) {
     }
 
     try {
-      const { data, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (authError || !data.session) {
-        setError('Credenciais inválidas. Verifique seu e-mail e senha.');
-        return;
-      }
-
-      login(data.session.access_token, data.user);
-    } catch (err) {
-      setError('Erro ao conectar com o servidor. Tente novamente.');
+      await login(email, password);
+    } catch (err: any) {
+      setError(err.message || 'Erro ao tentar login.');
     } finally {
       setIsLoading(false);
     }

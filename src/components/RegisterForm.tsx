@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { addUser, findUser } from '@/lib/authStore';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { supabase } from '@/lib/supabaseClient';
 
 interface RegisterFormProps {
   isDark: boolean;
@@ -41,18 +41,26 @@ export default function RegisterForm({ isDark, onSuccess }: RegisterFormProps) {
     setError('');
     setIsLoading(true);
 
-    if (findUser(data.email)) {
-      setError('Este e-mail já está cadastrado. Faça login.');
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      addUser({ email: data.email, password: data.password, name: data.name });
+      const { data: response, error: signUpError } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            name: data.name,
+          },
+        },
+      });
+
+      if (signUpError) {
+        setError(signUpError.message);
+        return;
+      }
+
+      alert('Conta criada com sucesso! Verifique seu e-mail para confirmar o cadastro.');
       onSuccess();
-    } catch {
-      setError('O cadastro falhou. Tente novamente.');
+    } catch (err) {
+      setError('Ocorreu um erro inesperado. Tente novamente.');
     } finally {
       setIsLoading(false);
     }
