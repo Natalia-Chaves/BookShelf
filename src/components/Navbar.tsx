@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-html-link-for-pages */
 // components/Navbar.tsx
-'use client';
+"use client";
 import { BookOpen, Search, User, LogOut, Library } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,12 +10,12 @@ export default function Navbar() {
   const pathname = usePathname();
   const { isAuthenticated, logout, user } = useAuth();
 
-  const isAuthPage = pathname === '/' || pathname === '/cadastro';
-  const isCatalogPage = pathname === '/catalogo';
+  const isAuthPage = pathname === "/" || pathname === "/cadastro";
+  const isCatalogPage = pathname === "/catalogo";
 
   const getFirstName = () => {
-    if (!user || !user.name) return 'Perfil';
-    return user.name.split(' ')[0];
+    if (!user || !user.name) return "Perfil";
+    return user.name.split(" ")[0];
   };
 
   if (isAuthPage) {
@@ -51,26 +51,31 @@ export default function Navbar() {
           <a href="/catalogo" aria-label="Catálogo">
             <Library size={28} />
           </a>
-          <button
-            aria-label="Buscar"
-            className="p-1"
-          >
+          <button aria-label="Buscar" className="p-1">
             <Search size={28} />
           </button>
         </div>
 
         {/* Desktop: catálogo texto + busca centralizados */}
         <div className="hidden md:flex flex-1 justify-center items-center gap-6">
-          <a href="/dashboard" className="text-lg font-medium hover:text-[var(--primary)] transition">
-            Dashboard
-          </a>
           <a
             href="/catalogo"
             className="text-lg font-medium hover:text-[var(--primary)] transition"
           >
             Catálogo
           </a>
-          <a href="/novidades" className="text-lg font-medium hover:text-[var(--primary)] transition">
+
+          <a
+            href="/dashboard"
+            className="text-lg font-medium hover:text-[var(--primary)] transition"
+          >
+            Dashboard
+          </a>
+
+          <a
+            href="/novidades"
+            className="text-lg font-medium hover:text-[var(--primary)] transition"
+          >
             Novidades
           </a>
           {isCatalogPage && (

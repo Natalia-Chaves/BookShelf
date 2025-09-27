@@ -12,6 +12,7 @@
   --main-background: #512b1e;
   --form-background: #D9B9A0;
   --title-color: #6e3b1f;
+  --color-shadow-hero: rgba(255, 255, 255, 0.15); 
 }
 
 /* ======== LIGHT MODE VIA CLASSE ======== */
@@ -36,6 +37,10 @@
   
   /* Cor para títulos, como "Sua Biblioteca de Livros" */
   --title-color: #512b1e;
+
+   --color-surface-hero: #d7a86e;
+  
+  --color-shadow-hero: rgba(38, 42, 62, 0.3); 
 }
 
 
@@ -88,7 +93,7 @@ main {
 /* ======== DARK MODE (FALLBACK) ======== */
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
-    --background: #422718;
+    --background: #512b1e;
     --foreground: #ededed;
     --text-primary: #ffffff;
     --divider-color: #A56734;
