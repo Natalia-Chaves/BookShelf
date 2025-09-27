@@ -7,6 +7,7 @@ import BookCard from "@/components/BookCard";
 import AddBookForm from "@/components/AddBookForm";
 import EditBookForm from "@/components/EditBookForm";
 import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
+import HeroSection from "@/components/HeroSection"; // Importação mantida
 
 import type { Book } from "@/types";
 import { supabase } from "@/lib/supabaseClient";
@@ -139,32 +140,46 @@ export default function CatalogoPage() {
   }
 
   return (
-    <main className="mx-auto flex-1 px-4 bg-[var(--main-background)] min-h-screen pb-32">
-      <h2 className="text-3xl font-bold text-center mb-2">Catálogo de Livros</h2>
-      <p className="text-center mb-6" style={{ color: "var(--text-primary)" }}>
-        Total de livros: <span className="font-semibold">{allBooks.length}</span>
-      </p>
+    <main 
+      // Largura do main ajustada: removemos o max-w-7xl e o px-4
+      className="mx-auto flex-1 bg-[var(--main-background)] min-h-screen pb-32"
+    >
+      
+      {/* 1. HERO SECTION (Agora full-width, com padding interno) */}
+      <HeroSection /> 
+      
+      {/* 2. CONTEÚDO DO CATÁLOGO: Usa o mesmo padding px-12 para o alinhamento total */}
+      <div className="mt-12 px-12"> 
+        {/* Títulos e contador */}
+        <h2 className="text-3xl font-bold text-center mb-2" style={{ color: 'var(--color-text-primary)' }}>
+            Catálogo de Livros
+        </h2>
+        <p className="text-center mb-6" style={{ color: 'var(--color-text-primary)' }}>
+            Total de livros: <span className="font-semibold">{allBooks.length}</span>
+        </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 items-stretch">
-        {allBooks.map(book => (
-          <BookCard
-            key={book.id}
-            book={book}
-            onEdit={handleEditBook}
-            onDelete={handleDeleteBook}
-            onRate={handleRateBook}
-          />
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 items-stretch">
+          {allBooks.map(book => (
+            <BookCard
+              key={book.id}
+              book={book}
+              onEdit={handleEditBook}
+              onDelete={handleDeleteBook}
+              onRate={handleRateBook}
+            />
+          ))}
 
-        {/* Botão + para adicionar livro */}
-        <div className="flex items-center justify-center p-4">
-          <button
-            onClick={handleShowAddForm}
-            className="w-24 h-24 bg-[#A0522D] hover:bg-[#8B4513] text-white rounded-full flex items-center justify-center shadow-lg transform transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-[#A0522D] focus:ring-opacity-50"
-            aria-label="Adicionar novo livro"
-          >
-            <Plus size={40} strokeWidth={2.5} />
-          </button>
+          {/* Botão + para adicionar livro */}
+          <div className="flex items-center justify-center p-4">
+            <button
+              onClick={handleShowAddForm}
+              // Adaptação da cor do botão para a paleta Mistletoe (ex: bg-[#6E3D34])
+              className="w-24 h-24 bg-[#6E3D34] hover:bg-opacity-80 text-white rounded-full flex items-center justify-center shadow-lg transform transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-[#6E3D34] focus:ring-opacity-50"
+              aria-label="Adicionar novo livro"
+            >
+              <Plus size={40} strokeWidth={2.5} />
+            </button>
+          </div>
         </div>
       </div>
 
