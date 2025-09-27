@@ -2,16 +2,18 @@
 
 import { useEffect, useState } from "react";
 import type { Book } from "@/types";
+import { supabase } from "@/lib/supabaseClient";
 import { BookOpen, BookMarked, BookCheck, FileText } from "lucide-react";
 
 export default function DashboardPage() {
   const [books, setBooks] = useState<Book[]>([]);
 
   useEffect(() => {
-    const savedBooks = localStorage.getItem("myBooks");
-    if (savedBooks) {
-      setBooks(JSON.parse(savedBooks));
-    }
+    const fetchBooks = async () => {
+      const { data, error } = await supabase.from("books").select("*");
+      if (!error && data) setBooks(data as Book[]);
+    };
+    fetchBooks();
   }, []);
 
   const totalBooks = books.length;

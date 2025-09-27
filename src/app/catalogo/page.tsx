@@ -8,30 +8,43 @@ import AddBookForm from "@/components/AddBookForm";
 import EditBookForm from "@/components/EditBookForm";
 import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
 
-import { initialBooks } from "@/lib/books";
 import type { Book } from "@/types";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function CatalogoPage() {
-  const [allBooks, setAllBooks] = useState<Book[]>(() => {
-    if (typeof window !== 'undefined') {
-      const savedBooks = localStorage.getItem('myBooks');
-      if (savedBooks) return JSON.parse(savedBooks);
-    }
-    return initialBooks.map(book => ({
-      ...book,
-      id: book.id || Date.now().toString() + Math.random().toString(36).substring(2, 9),
-      rating: book.rating ?? 0,
-      synopsis: book.synopsis ?? '',
-    }));
-  });
+  const [allBooks, setAllBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [bookToEdit, setBookToEdit] = useState<Book | null>(null);
   const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
 
+  // Função para limpar campos undefined antes de enviar ao Supabase
+  function cleanObject<T extends Record<string, any>>(obj: T): Partial<T> {
+    const cleaned: Partial<T> = {};
+    for (const key in obj) {
+      if (obj[key] !== undefined) {
+        cleaned[key] = obj[key];
+      }
+    }
+    return cleaned;
+  }
+
+  // Função para carregar livros atualizados
+  const fetchBooks = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("books")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (!error && data) setAllBooks(data as Book[]);
+    setLoading(false);
+  };
+
+  // Buscar livros na montagem do componente
   useEffect(() => {
-    localStorage.setItem('myBooks', JSON.stringify(allBooks));
-  }, [allBooks]);
+    fetchBooks();
+  }, []);
 
   // Abrir form de adicionar livro
   const handleShowAddForm = () => {
@@ -46,22 +59,29 @@ export default function CatalogoPage() {
   };
 
   // Salvar livro (novo ou editado)
-  const handleSaveBook = (book: Book) => {
+  const handleSaveBook = async (book: Book) => {
     if (bookToEdit) {
-      // Atualiza livro existente
-      setAllBooks(prev =>
-        prev.map(b => (b.id === book.id ? book : b))
-      );
+      // Atualizar no Supabase
+      const cleanedBook = cleanObject(book);
+      const { error } = await supabase
+        .from("books")
+        .update(cleanedBook)
+        .eq("id", book.id);
+      if (!error) {
+        await fetchBooks(); // Atualiza lista após edição
+      }
     } else {
-      // Adiciona novo livro com id único
-      const newBook = {
-        ...book,
-        id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
-        rating: book.rating ?? 0,
-        synopsis: book.synopsis ?? '',
-      };
-      setAllBooks(prev => [newBook, ...prev]);
+      // Inserir no Supabase
+      const cleanedBook = cleanObject(book);
+      const { data, error } = await supabase
+        .from("books")
+        .insert([cleanedBook])
+        .select();
+      if (!error && data) {
+        await fetchBooks(); // Atualiza lista após inserção
+      }
     }
+
     setShowAddForm(false);
     setBookToEdit(null);
   };
@@ -72,35 +92,60 @@ export default function CatalogoPage() {
     setBookToEdit(null);
   };
 
-  // Excluir livro
+  // Preparar exclusão de livro
   const handleDeleteBook = (book: Book) => {
     setBookToDelete(book);
   };
-  const handleConfirmDelete = () => {
+
+  // Confirmar exclusão e atualizar lista
+  const handleConfirmDelete = async () => {
     if (!bookToDelete) return;
-    setAllBooks(prev => prev.filter(b => b.id !== bookToDelete.id));
+
+    const { error } = await supabase
+      .from("books")
+      .delete()
+      .eq("id", bookToDelete.id);
+    if (!error) {
+      await fetchBooks(); // Atualiza lista após exclusão
+    }
     setBookToDelete(null);
   };
+
   const handleCancelDelete = () => {
     setBookToDelete(null);
   };
 
   // Avaliar livro
-  const handleRateBook = (book: Book, rating: number) => {
-    setAllBooks(prev =>
-      prev.map(b => (b.id === book.id ? { ...b, rating } : b))
-    );
+  const handleRateBook = async (book: Book, rating: number) => {
+    const updatedBook = { ...book, rating };
+    const { error } = await supabase
+      .from("books")
+      .update({ rating })
+      .eq("id", book.id);
+
+    if (!error) {
+      setAllBooks(prev =>
+        prev.map(b => (b.id === book.id ? updatedBook : b))
+      );
+    }
   };
 
-  return (
-    <main className="mx-auto px-4 bg-[var(--main-background)] min-h-screen pb-20">
+  if (loading) {
+    return (
+      <main className="mx-auto flex-1 px-4 bg-[var(--main-background)] min-h-screen pb-32 flex items-center justify-center">
+        <p className="text-lg font-medium">Carregando livros...</p>
+      </main>
+    );
+  }
 
+  return (
+    <main className="mx-auto flex-1 px-4 bg-[var(--main-background)] min-h-screen pb-32">
       <h2 className="text-3xl font-bold text-center mb-2">Catálogo de Livros</h2>
       <p className="text-center mb-6" style={{ color: "var(--text-primary)" }}>
         Total de livros: <span className="font-semibold">{allBooks.length}</span>
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 items-stretch">
         {allBooks.map(book => (
           <BookCard
             key={book.id}
@@ -123,7 +168,6 @@ export default function CatalogoPage() {
         </div>
       </div>
 
-      {/* Formulário de adicionar livro */}
       {showAddForm && !bookToEdit && (
         <AddBookForm
           onSave={handleSaveBook}
@@ -131,7 +175,6 @@ export default function CatalogoPage() {
         />
       )}
 
-      {/* Formulário de editar livro */}
       {bookToEdit && (
         <EditBookForm
           book={bookToEdit}
@@ -140,7 +183,6 @@ export default function CatalogoPage() {
         />
       )}
 
-      {/* Modal confirmação de exclusão */}
       {bookToDelete && (
         <DeleteConfirmationModal
           book={bookToDelete}

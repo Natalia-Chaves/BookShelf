@@ -42,7 +42,7 @@ export default function DeleteConfirmationModal({
             onClick={onConfirm}
             className="px-4 py-2 rounded text-white transition"
             style={{
-              backgroundColor: 'var(--danger-color, #dc2626)', // fallback vermelho se não tiver uma var
+              backgroundColor: 'var(--danger-color, #dc2626)',
             }}
           >
             Excluir

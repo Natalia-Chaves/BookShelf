@@ -1,20 +1,37 @@
-// app/components/BookListClient.tsx
-"use client";
+'use client';
 
 import { useState } from "react";
 import BookCard from "./BookCard";
 import AddBookForm from "./AddBookForm";
 import EditBookForm from "./EditBookForm";
 import type { Book } from "@/types";
+import { supabase } from "@/lib/supabaseClient";
 
 type BookListClientProps = {
-  initialBooks: Book[];
+  initialBooks?: Book[]; // opcional com default
 };
 
-export default function BookListClient({ initialBooks }: BookListClientProps) {
+export default function BookListClient({ initialBooks = [] }: BookListClientProps) {
   const [books, setBooks] = useState<Book[]>(initialBooks);
   const [showAddForm, setShowAddForm] = useState(false);
   const [bookBeingEdited, setBookBeingEdited] = useState<Book | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const reloadBooks = async () => {
+    setLoading(true);
+    setError(null);
+    const { data, error } = await supabase
+      .from("books")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) {
+      setError("Erro ao carregar livros.");
+    } else if (data) {
+      setBooks(data);
+    }
+    setLoading(false);
+  };
 
   const handleAddClick = () => {
     setShowAddForm(true);
@@ -26,26 +43,34 @@ export default function BookListClient({ initialBooks }: BookListClientProps) {
     setShowAddForm(false);
   };
 
-  const handleDelete = (book: Book) => {
-    setBooks(prev => prev.filter(b => b.id !== book.id));
+  const handleDelete = async (book: Book) => {
+    setLoading(true);
+    setError(null);
+    const { error } = await supabase.from("books").delete().eq("id", book.id);
+    if (error) {
+      setError("Erro ao excluir livro.");
+    } else {
+      setBooks(prev => prev.filter(b => b.id !== book.id));
+    }
+    setLoading(false);
   };
 
-  const handleRate = (book: Book, rating: number) => {
-    setBooks(prev =>
-      prev.map(b => (b.id === book.id ? { ...b, rating } : b))
-    );
+  const handleRate = async (book: Book, rating: number) => {
+    setLoading(true);
+    setError(null);
+    const { error } = await supabase.from("books").update({ rating }).eq("id", book.id);
+    if (error) {
+      setError("Erro ao avaliar livro.");
+    } else {
+      setBooks(prev =>
+        prev.map(b => (b.id === book.id ? { ...b, rating } : b))
+      );
+    }
+    setLoading(false);
   };
 
-  const handleSaveBook = (book: Book) => {
-    setBooks(prev => {
-      const exists = prev.find(b => b.id === book.id);
-      if (exists) {
-        return prev.map(b => (b.id === book.id ? book : b));
-      } else {
-        return [...prev, book];
-      }
-    });
-
+  const handleSaveBook = async () => {
+    await reloadBooks();
     setShowAddForm(false);
     setBookBeingEdited(null);
   };
@@ -60,12 +85,21 @@ export default function BookListClient({ initialBooks }: BookListClientProps) {
       <button
         onClick={handleAddClick}
         className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        disabled={loading}
       >
         Adicionar Livro
       </button>
 
+      {error && (
+        <p className="mb-4 text-red-600 font-semibold">{error}</p>
+      )}
+
+      {loading && (
+        <p className="mb-4 text-gray-600">Carregando...</p>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {books.map(book => (
+        {(books ?? []).map(book => (
           <BookCard
             key={book.id}
             book={book}

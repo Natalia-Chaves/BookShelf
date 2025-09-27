@@ -39,7 +39,7 @@ export default function CadastroPage({ theme }: CadastroPageProps) {
                 </p>
             </div>
             
-            {/* Conteúdo central, sem gerar scroll */}
+            {/* Conteúdo central */}
             <div className="flex flex-col justify-center items-center w-full max-w-lg">
                 {isSuccess ? (
                     <div className={`w-full p-8 rounded-xl shadow-2xl text-center 

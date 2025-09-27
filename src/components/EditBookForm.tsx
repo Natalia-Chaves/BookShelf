@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabaseClient";
 import type { Book } from '@/types';
 
 interface EditBookFormProps {
@@ -17,6 +18,8 @@ export default function EditBookForm({ book, onSave, onCancel }: EditBookFormPro
   const [year, setYear] = useState<number | ''>(book.year ?? '');
   const [pages, setPages] = useState<number | ''>(book.pages ?? '');
   const [synopsis, setSynopsis] = useState(book.synopsis || '');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     setTitle(book.title || '');
@@ -28,7 +31,7 @@ export default function EditBookForm({ book, onSave, onCancel }: EditBookFormPro
     setSynopsis(book.synopsis || '');
   }, [book]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!title.trim() || !author.trim()) {
@@ -36,18 +39,38 @@ export default function EditBookForm({ book, onSave, onCancel }: EditBookFormPro
       return;
     }
 
-    const updatedBook: Book = {
-      ...book,
+    setLoading(true);
+    setError('');
+
+    // Prepare apenas os campos atualizáveis (sem `id`)
+    const updatedFields = {
       title: title.trim(),
       author: author.trim(),
-      cover: cover.trim(),
+      cover: cover.trim() || undefined,
       genre: genre.trim() || undefined,
       year: typeof year === 'number' ? year : undefined,
       pages: typeof pages === 'number' ? pages : undefined,
       synopsis: synopsis.trim() || '',
     };
 
-    onSave(updatedBook);
+    const { data, error } = await supabase
+      .from("books")
+      .update(updatedFields)
+      .eq("id", book.id)
+      .select()
+      .single();
+
+    setLoading(false);
+
+    if (error) {
+      console.error(error);
+      setError("Erro ao atualizar livro.");
+      return;
+    }
+
+    if (data) {
+      onSave(data); // Retorna o livro atualizado
+    }
   };
 
   return (
@@ -96,7 +119,9 @@ export default function EditBookForm({ book, onSave, onCancel }: EditBookFormPro
           type="number"
           placeholder="Ano"
           value={year}
-          onChange={e => setYear(e.target.value === '' ? '' : Number(e.target.value))}
+          onChange={e =>
+            setYear(e.target.value === '' ? '' : Number(e.target.value))
+          }
           className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
           min={0}
           max={new Date().getFullYear()}
@@ -106,7 +131,9 @@ export default function EditBookForm({ book, onSave, onCancel }: EditBookFormPro
           type="number"
           placeholder="Número de páginas"
           value={pages}
-          onChange={e => setPages(e.target.value === '' ? '' : Number(e.target.value))}
+          onChange={e =>
+            setPages(e.target.value === '' ? '' : Number(e.target.value))
+          }
           className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
           min={1}
         />
@@ -119,6 +146,14 @@ export default function EditBookForm({ book, onSave, onCancel }: EditBookFormPro
           className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] resize-none"
         />
 
+        {error && (
+          <p className="text-red-500 text-sm text-center">{error}</p>
+        )}
+
+        {loading && (
+          <p className="text-sm text-center text-[var(--primary)]">Salvando...</p>
+        )}
+
         <div className="flex justify-end gap-3">
           <button
             type="button"
@@ -129,6 +164,7 @@ export default function EditBookForm({ book, onSave, onCancel }: EditBookFormPro
           </button>
           <button
             type="submit"
+            disabled={loading}
             className="px-4 py-2 rounded-lg bg-[var(--primary)] hover:brightness-90 text-white font-semibold transition"
           >
             Salvar

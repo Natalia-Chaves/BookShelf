@@ -2,14 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import type { Book } from '@/types';
+import { supabase } from '@/lib/supabaseClient';
 
 interface AddBookFormProps {
   bookToEdit?: Book | null;
-  onSave: (book: Book) => void;
+  onSave: () => void;
   onCancel: () => void;
 }
 
-export default function AddBookForm({ bookToEdit = null, onSave, onCancel }: AddBookFormProps) {
+export default function AddBookForm({
+  bookToEdit = null,
+  onSave,
+  onCancel,
+}: AddBookFormProps) {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [cover, setCover] = useState('');
@@ -17,6 +22,8 @@ export default function AddBookForm({ bookToEdit = null, onSave, onCancel }: Add
   const [year, setYear] = useState<number | ''>('');
   const [pages, setPages] = useState<number | ''>('');
   const [synopsis, setSynopsis] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (bookToEdit) {
@@ -30,7 +37,7 @@ export default function AddBookForm({ bookToEdit = null, onSave, onCancel }: Add
     }
   }, [bookToEdit]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!title.trim() || !author.trim()) {
@@ -38,19 +45,43 @@ export default function AddBookForm({ bookToEdit = null, onSave, onCancel }: Add
       return;
     }
 
-    const newBook: Book = {
-      id: bookToEdit?.id || Date.now().toString() + Math.random().toString(36).slice(2),
+    setLoading(true);
+    setError('');
+
+    const newBook: Omit<Book, 'id' | 'rating' | 'pagesRead' | 'imageUrl'> = {
       title: title.trim(),
       author: author.trim(),
-      cover: cover.trim(),
+      cover: cover.trim() || undefined,
       genre: genre.trim() || undefined,
       year: typeof year === 'number' ? year : undefined,
       pages: typeof pages === 'number' ? pages : undefined,
       synopsis: synopsis.trim() || '',
-      rating: bookToEdit?.rating ?? 0,
+      status: bookToEdit ? bookToEdit.status : 'quero ler',
     };
 
-    onSave(newBook);
+    let result;
+    if (bookToEdit) {
+      result = await supabase
+        .from('books')
+        .update(newBook)
+        .eq('id', bookToEdit.id)
+        .select();
+    } else {
+      result = await supabase
+        .from('books')
+        .insert([newBook])
+        .select();
+    }
+
+    if (result.error) {
+      console.error('Erro ao salvar:', result.error.message);
+      setError('Erro ao salvar o livro. Verifique os dados e tente novamente.');
+      setLoading(false);
+      return;
+    }
+
+    setLoading(false);
+    onSave();
   };
 
   return (
@@ -101,7 +132,9 @@ export default function AddBookForm({ bookToEdit = null, onSave, onCancel }: Add
           type="number"
           placeholder="Ano"
           value={year}
-          onChange={e => setYear(e.target.value === '' ? '' : Number(e.target.value))}
+          onChange={e =>
+            setYear(e.target.value === '' ? '' : Number(e.target.value))
+          }
           className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
           min={0}
           max={new Date().getFullYear()}
@@ -111,7 +144,9 @@ export default function AddBookForm({ bookToEdit = null, onSave, onCancel }: Add
           type="number"
           placeholder="Número de páginas"
           value={pages}
-          onChange={e => setPages(e.target.value === '' ? '' : Number(e.target.value))}
+          onChange={e =>
+            setPages(e.target.value === '' ? '' : Number(e.target.value))
+          }
           className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
           min={1}
         />
@@ -124,8 +159,15 @@ export default function AddBookForm({ bookToEdit = null, onSave, onCancel }: Add
           className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] resize-none"
         />
 
+        {error && (
+          <p className="text-red-500 text-sm text-center">{error}</p>
+        )}
+
+        {loading && (
+          <p className="text-sm text-center text-[var(--primary)]">Salvando...</p>
+        )}
+
         <div className="flex justify-end gap-3">
-          {/* Botão Cancelar corrigido */}
           <button
             type="button"
             onClick={onCancel}
@@ -134,9 +176,9 @@ export default function AddBookForm({ bookToEdit = null, onSave, onCancel }: Add
             Cancelar
           </button>
 
-          {/* Botão Salvar (mantido com base na variável --primary) */}
           <button
             type="submit"
+            disabled={loading}
             className="px-4 py-2 rounded-lg bg-[var(--primary)] hover:brightness-90 text-white font-semibold transition"
           >
             Salvar

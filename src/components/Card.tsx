@@ -1,23 +1,17 @@
+'use client';
+import React from 'react';
+import type { Book } from '@/types';
 
-
-import React from 'react'; // Arquivo de estilização
-
-interface Book {
-  id: string;
-  titulo: string;
-  autor: string;
-  imageUrl: string;
-}
-
-// O componente recebe os dados do livro através de "props"
-const Card = ({ titulo, autor, imageUrl }: Book): React.JSX.Element => {
+export default function Card({ title, author, cover }: Book): React.JSX.Element {
   return (
     <div className="card-container">
-      <img src={imageUrl} alt={`Capa do livro ${titulo}`} className="book-cover" />
-      <h3>{titulo}</h3>
-      <p>{autor}</p>
+      <img
+        src={cover}
+        alt={`Capa do livro ${title}`}
+        className="book-cover"
+      />
+      <h3>{title}</h3>
+      <p>{author}</p>
     </div>
   );
-};
-
-export default Card;
+}

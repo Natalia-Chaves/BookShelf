@@ -1,53 +1,28 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { initialBooks } from '@/lib/books';
+import { supabase } from '@/lib/supabaseClient';
 import type { Book } from '@/types';
-
-const createSlug = (title: string): string => {
-  return title
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-};
 
 export default function BookDetailPage() {
   const { slug } = useParams() as { slug: string };
-
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  const load = () => {
-    let parsedBooks: Book[] = initialBooks;
+    const fetchBook = async () => {
+      const { data, error } = await supabase
+        .from("books")
+        .select("*")
+        .eq("id", slug) // 🔧 alterado de ilike("slug", slug)
+        .single();
 
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('myBooks');
-      if (stored) {
-        try {
-          const storedBooks = JSON.parse(stored) as Partial<Book>[];
-
-          
-        } catch (err) {
-          console.error('Erro JSON.parse localBooks:', err);
-          parsedBooks = initialBooks;
-        }
-      }
-    }
-
-    const found = parsedBooks.find(b => createSlug(b.title) === slug);
-
-    setBook(found || null);
-    setLoading(false);
-  };
-
-  load();
-}, [slug]);
-
+      if (!error && data) setBook(data as Book);
+      setLoading(false);
+    };
+    fetchBook();
+  }, [slug]);
 
   if (loading) {
     return (
@@ -119,8 +94,9 @@ export default function BookDetailPage() {
             {book.genre && <p><strong>Gênero:</strong> {book.genre}</p>}
             {book.year && <p><strong>Ano:</strong> {book.year}</p>}
             {book.pages && <p><strong>Páginas:</strong> {book.pages}</p>}
-            <p><strong>Avaliação:</strong> {book.rating} / 5</p>
+            <p><strong>Avaliação:</strong> {book.rating ?? 0} / 5</p>
           </div>
+
           {book.synopsis && (
             <div className="mt-6">
               <h2 className="text-2xl font-semibold mb-2">Sinopse</h2>

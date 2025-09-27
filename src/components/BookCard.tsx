@@ -1,20 +1,18 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import React from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import StarRating from './StarRating';
 import type { Book } from '@/types';
 import Link from 'next/link';
 
-const createSlug = (title: string): string => {
-  return title
+const createSlug = (title: string): string =>
+  title
     .toLowerCase()
     .trim()
     .replace(/[^\w\s-]/g, '')
     .replace(/[\s_-]+/g, '-')
     .replace(/^-+|-+$/g, '');
-};
 
 interface BookCardProps {
   book: Book;
@@ -27,16 +25,10 @@ export default function BookCard({ book, onEdit, onDelete, onRate }: BookCardPro
   const { title, author, cover, imageUrl, rating = 0 } = book;
   const bookSlug = createSlug(title);
 
-  const handleRate = (newRating: number) => {
-    onRate(book, newRating);
-  };
-
   const coverSrc = cover || imageUrl || '/images/default-cover.jpg';
 
   return (
     <div className="bg-[#EFEAE4] rounded-lg shadow-md overflow-hidden transform transition-all duration-300 hover:scale-105 flex flex-col h-full">
-
-      {/* Link para detalhes do livro */}
       <Link href={`/livro/${bookSlug}`} className="flex flex-col h-full cursor-pointer">
         <div className="relative w-full aspect-[2/3] p-4 flex items-center justify-center bg-gray-200">
           <img
@@ -53,12 +45,10 @@ export default function BookCard({ book, onEdit, onDelete, onRate }: BookCardPro
         </div>
       </Link>
 
-      {/* Avaliação com estrelas */}
       <div className="p-4 pt-0 flex justify-center">
-        <StarRating rating={rating} onRate={handleRate} />
+        <StarRating rating={rating} onRate={(newRating) => onRate(book, newRating)} />
       </div>
 
-      {/* Botões Editar e Excluir - fora do Link para clique funcionar */}
       <div className="flex justify-between px-6 pb-4">
         <button
           type="button"
@@ -80,7 +70,6 @@ export default function BookCard({ book, onEdit, onDelete, onRate }: BookCardPro
           Excluir
         </button>
       </div>
-
     </div>
   );
 }
