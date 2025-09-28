@@ -1,8 +1,5 @@
 @import "tailwindcss";
 
-
-
-
 /* ======== CORES PRINCIPAIS (DEFAULT: DARK) ======== */
 :root {
   --background: #422718;
@@ -10,39 +7,44 @@
   --text-primary: #ffffff;
   --divider-color: #A56734;
   --main-background: #512b1e;
-  --form-background: #D9B9A0;
+  --form-background: #D9B9A0; /* Valor original mantido */
   --title-color: #6e3b1f;
-  --color-shadow-hero: rgba(255, 255, 255, 0.15); 
+  --color-shadow-hero: rgba(255, 255, 255, 0.15);
+
+  /* NOVA VARIÁVEL: Cor da Barra de Busca FIXADA no cinza claro */
+  --form-search-background: #f5e6d5;
 }
 
 /* ======== LIGHT MODE VIA CLASSE ======== */
 .light {
   /* Fundo da Navbar, Footer e do corpo */
-  --background: #d7a86e; 
-  
+  --background: #d7a86e;
+
   /* Cor dos ícones, texto principal e logos */
   --foreground: #3e2723;
-  
+
   /* Cor principal de texto, usado em links e botões */
   --text-primary: #3e2723;
-  
+
   /* Cor dos divisores e bordas */
   --divider-color: #a58b75;
-  
+
   /* Fundo da área de conteúdo principal (cards, etc) */
   --main-background: #d7a86e;
-  
+
   /* Fundo dos campos de formulário e áreas de busca */
-  --form-background: #f5e6d5;
-  
+  --form-background: #f5e6d5; /* Valor original mantido */
+
   /* Cor para títulos, como "Sua Biblioteca de Livros" */
   --title-color: #512b1e;
 
-   --color-surface-hero: #d7a86e;
-  
-  --color-shadow-hero: rgba(38, 42, 62, 0.3); 
-}
+  --color-surface-hero: #d7a86e;
 
+  --color-shadow-hero: rgba(38, 42, 62, 0.3);
+
+  /* NOVA VARIÁVEL: Cor da Barra de Busca FIXADA no cinza claro */
+  --form-search-background: #f5e6d5;
+}
 
 /* ======== BODY ======== */
 body {
@@ -98,6 +100,9 @@ main {
     --text-primary: #ffffff;
     --divider-color: #A56734;
     --main-background: #512b1e;
-    --form-background: #A56734;
+    --form-background: #A56734; /* Valor original mantido */
+
+    /* NOVA VARIÁVEL: Cor da Barra de Busca FIXADA no cinza claro */
+    --form-search-background: #f5e6d5;
   }
 }

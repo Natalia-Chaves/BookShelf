@@ -6,24 +6,18 @@ import { BookOpenText } from "lucide-react";
 export default function HeroSection() {
   return (
     <div
-      // Largura: Full Width (sem padding lateral, controlado pelo componente pai). Altura: 350px.
-      className="h-[350px] overflow-hidden mb-12 py-8 rounded-3xl"
+      // Reduzido padding superior para aproximar da Navbar
+      className="h-[350px] overflow-hidden mb-12 pt-2 pb-8 rounded-3xl"
       style={{
-        // Usa a variável de fundo que se adapta ao tema
         backgroundColor: "var(--color-surface-hero)",
-
-        // Sombra uniforme e forte, adaptável com a variável CSS
         boxShadow: "0 0 20px 0 var(--color-shadow-hero)",
-        borderRadius: "24px", // Bordas arredondadas
+        borderRadius: "24px",
       }}
     >
-      <div
-        // O max-w-[1500px] mx-auto centraliza o conteúdo.
-        // O padding interno (px-4 md:px-8) impede que o conteúdo grude nas bordas do Hero.
-        className="max-w-[1500px] mx-auto grid grid-cols-1 md:grid-cols-2 items-center h-full gap-8 px-4 md:px-8"
-      >
+      <div className="max-w-[1500px] mx-auto grid grid-cols-1 md:grid-cols-2 items-center h-full gap-8 px-4 md:px-8">
+        
         {/* Lado Esquerdo: Bloco de Mensagem */}
-        <div className="flex flex-col justify-center space-y-4">
+        <div className="flex flex-col justify-center items-center space-y-4 text-center">
           <h1
             className="text-4xl md:text-5xl font-extrabold"
             style={{ color: "var(--text-primary)" }}
@@ -31,7 +25,7 @@ export default function HeroSection() {
             Explore Sua Biblioteca Virtual
           </h1>
           <p
-            className="text-md md:text-xl flex text-center"
+            className="text-md md:text-xl"
             style={{ color: "var(--text-primary)" }}
           >
             Descubra sua vasta coleção de títulos, do clássico ao contemporâneo.
@@ -47,6 +41,7 @@ export default function HeroSection() {
             strokeWidth={1}
           />
         </div>
+
       </div>
     </div>
   );

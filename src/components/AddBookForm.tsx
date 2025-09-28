@@ -179,7 +179,7 @@ export default function AddBookForm({
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 rounded-lg bg-[var(--primary)] hover:brightness-90 text-white font-semibold transition"
+            className="px-4 py-2 rounded-lg bg-[var(--divider-color)] text-[var(--foreground)] hover:brightness-110 transition"
           >
             Salvar
           </button>
