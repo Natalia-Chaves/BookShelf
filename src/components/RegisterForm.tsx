@@ -42,23 +42,54 @@ export default function RegisterForm({ isDark, onSuccess }: RegisterFormProps) {
     setIsLoading(true);
 
     try {
+      // 1) Verificar se email já existe na tabela profiles
+      const { data: existingUser, error: fetchError } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('email', data.email)
+        .single();
+
+      if (existingUser) {
+        setError('Esse e-mail já está cadastrado.');
+        setIsLoading(false);
+        return;
+      }
+
+      // 2) Criar usuário no Auth do Supabase
       const { data: response, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
-          data: {
-            name: data.name,
-          },
+          // user_metadata é opcional, vamos salvar o nome no profile depois
         },
       });
 
       if (signUpError) {
         setError(signUpError.message);
+        setIsLoading(false);
         return;
+      }
+
+      // 3) Inserir dados na tabela profiles
+      if (response.user) {
+        const { id } = response.user;
+        const { error: insertError } = await supabase.from('profiles').insert([
+          {
+            id,
+            name: data.name,
+            email: data.email,
+          },
+        ]);
+        if (insertError) {
+          setError('Erro ao salvar perfil.');
+          setIsLoading(false);
+          return;
+        }
       }
 
       alert('Conta criada com sucesso! Verifique seu e-mail para confirmar o cadastro.');
       onSuccess();
+
     } catch (err) {
       setError('Ocorreu um erro inesperado. Tente novamente.');
     } finally {

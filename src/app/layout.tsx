@@ -1,4 +1,3 @@
-// app/layout.tsx
 'use client';
 
 import { Inter } from 'next/font/google';
@@ -17,14 +16,12 @@ export default function RootLayout({
   children: ReactNode;
 }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning className="transition-colors duration-300">
+    <html lang="pt-BR" suppressHydrationWarning>
       <body className={`${inter.className} flex flex-col min-h-screen`} suppressHydrationWarning>
         <ThemeProvider>
           <AuthProvider>
             <Navbar />
-            <main>
-              {children}
-            </main>
+            <main className="flex-grow">{children}</main>
             <Footer />
           </AuthProvider>
         </ThemeProvider>

@@ -15,7 +15,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,30 +25,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // Verifica sessão ao carregar
   useEffect(() => {
-    const getSession = async () => {
-      const { data, error } = await supabase.auth.getSession();
+    const setup = async () => {
+      const { data } = await supabase.auth.getSession();
 
       if (data.session?.user) {
         const { id, email, user_metadata } = data.session.user;
-        const name = user_metadata?.name || 'Usuário';
+        // Buscar nome no profile
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', id)
+          .single();
 
+        const name = profileData?.full_name || user_metadata?.name || 'Usuário';
         setUser({ id, name, email });
       } else {
         setUser(null);
       }
-
       setIsLoading(false);
     };
 
-    getSession();
+    setup();
 
-    // Listener para login/logout
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
         const { id, email, user_metadata } = session.user;
-        const name = user_metadata?.name || 'Usuário';
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', id)
+          .single();
+        const name = profileData?.full_name || user_metadata?.name || 'Usuário';
         setUser({ id, name, email });
       } else {
         setUser(null);
@@ -56,25 +64,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     return () => {
-      authListener.subscription.unsubscribe();
+      listener.subscription.unsubscribe();
     };
   }, []);
 
   const login = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error || !data.session) {
       throw new Error('E-mail ou senha incorretos.');
     }
-
     const { id, user_metadata } = data.user;
-    const name = user_metadata?.name || 'Usuário';
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('id', id)
+      .single();
 
-    setUser({ id, name, email: data.user.email });
-    router.push('/catalogo'); // Redirecionar após login
+    const name = profileData?.full_name || user_metadata?.name || 'Usuário';
+    setUser({ id, name, email });
+    router.push('/catalogo');
   };
 
   const logout = async () => {
@@ -83,16 +91,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     router.push('/');
   };
 
-  const value: AuthContextType = {
-    isAuthenticated: !!user,
-    user,
-    isLoading,
-    login,
-    logout,
-  };
-
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated: !!user,
+        user,
+        isLoading,
+        login,
+        logout,
+      }}
+    >
       {!isLoading && children}
     </AuthContext.Provider>
   );
@@ -101,7 +109,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth deve ser usado dentro de um AuthProvider');
+    throw new Error('useAuth must be used within AuthProvider');
   }
   return context;
 };

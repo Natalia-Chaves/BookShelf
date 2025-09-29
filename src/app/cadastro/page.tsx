@@ -6,10 +6,10 @@ import RegisterForm from '@/components/RegisterForm';
 import { CheckCircle, BookOpen } from 'lucide-react';
 
 interface CadastroPageProps {
-    theme: 'dark' | 'light';
+    theme?: 'dark' | 'light'; // Agora opcional
 }
 
-export default function CadastroPage({ theme }: CadastroPageProps) {
+export default function CadastroPage({ theme = 'light' }: CadastroPageProps) {
     const [isSuccess, setIsSuccess] = useState(false);
     const router = useRouter();
     const isDark = theme === 'dark';

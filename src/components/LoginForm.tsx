@@ -48,12 +48,32 @@ export default function LoginForm({ isDark }: LoginFormProps) {
 
       <div className="mb-4">
         <label htmlFor="email" className="block text-sm font-medium mb-1">E-mail</label>
-        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required className={inputStyle} />
+        <input
+          type="email"
+          id="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className={inputStyle}
+        />
       </div>
 
-      <div className="mb-6">
+      <div className="mb-2">
         <label htmlFor="password" className="block text-sm font-medium mb-1">Senha</label>
-        <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required className={inputStyle} />
+        <input
+          type="password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          className={inputStyle}
+        />
+      </div>
+
+      <div className="mb-6 text-right">
+        <Link href="/forgotpassword" className="text-sm text-[#6e3b1f] underline hover:text-[#c7925c]">
+          Esqueceu a senha?
+        </Link>
       </div>
 
       <button
@@ -64,7 +84,7 @@ export default function LoginForm({ isDark }: LoginFormProps) {
         {isLoading ? 'Entrando...' : 'Entrar'}
       </button>
 
-      <p className="mt-4 text-center text-sm text-[#6e3b1f]">
+      <p className="mt-4 text-center text-sm text-[#3e2723]">
         Não tem uma conta?{' '}
         <Link href="/cadastro" className="font-bold underline hover:text-[#c7925c]">
           Cadastre-se
