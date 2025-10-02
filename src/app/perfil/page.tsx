@@ -7,22 +7,23 @@ import { useRouter } from 'next/navigation';
 export default function PerfilPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [avatar, setAvatar] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    const getUser = async () => {
+    const fetchUser = async () => {
       const { data, error } = await supabase.auth.getUser();
-
       if (error) {
         console.error('Erro ao buscar usuário:', error.message);
       } else {
         setUser(data.user);
       }
-
+      // carregar avatar do localStorage, se houver
+      const saved = localStorage.getItem('user-avatar');
+      if (saved) setAvatar(saved);
       setLoading(false);
     };
-
-    getUser();
+    fetchUser();
   }, []);
 
   const handleLogout = async () => {
@@ -30,46 +31,95 @@ export default function PerfilPage() {
     router.push('/');
   };
 
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result as string;
+        setAvatar(base64);
+        localStorage.setItem('user-avatar', base64);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   if (loading) {
     return (
-      <div className="text-center mt-10 text-[#3e2723]">
-        <p>Carregando seu perfil...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[var(--main-background)] text-[var(--foreground)]">
+        <p>Carregando perfil...</p>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="text-center mt-10 text-[#8b0000] font-semibold">
-        <p>⚠️ Você precisa estar logado para acessar esta página.</p>
+      <div className="min-h-screen flex items-center justify-center bg-[var(--main-background)] text-red-600">
+        <p>Você precisa estar logado para ver este conteúdo.</p>
       </div>
     );
   }
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen px-4 py-12 bg-[#f2d1a0]">
-      <section className="bg-white rounded-xl shadow-2xl p-10 max-w-2xl w-full border border-[#a56734]">
-        <h1 className="text-4xl font-bold text-[#3e2723] mb-6 text-center">Meu Perfil</h1>
+    <main className="min-h-screen bg-[var(--main-background)] text-[var(--foreground)]">
+      {/* Conteúdo principal */}
+      <section className="relative -mt-24 px-4 pb-8">
+        <div className="max-w-3xl mx-auto bg-[var(--form-background)] rounded-xl shadow-2xl p-8 border border-[var(--divider-color)]">
+          
+          <div className="flex flex-col md:flex-row items-center md:items-start md:space-x-6">
+            {/* Avatar */}
+            <div className="shrink-0">
+              {avatar ? (
+                <img
+                  src={avatar}
+                  alt="Avatar"
+                  className="w-32 h-32 rounded-full object-cover border-4 border-[var(--divider-color)]"
+                />
+              ) : (
+                <div className="w-32 h-32 rounded-full bg-[var(--divider-color)] flex items-center justify-center text-white text-3xl border-4 border-[var(--divider-color)]">
+                  {user.user_metadata?.name?.charAt(0) || 'U'}
+                </div>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className="mt-2 text-xs text-[var(--foreground)]"
+              />
+            </div>
 
-        <div className="space-y-4 text-[#3e2723] text-lg">
-          <div>
-            <span className="font-semibold">👤 Nome:</span>{' '}
-            {user.user_metadata?.name || 'Não informado'}
-          </div>
-          <div>
-            <span className="font-semibold">📧 Email:</span> {user.email}
-          </div>
-          <div>
-            <span className="font-semibold">🆔 ID:</span> {user.id}
+            {/* Informações do usuário */}
+            <div className="mt-4 md:mt-0 flex-1">
+              <h1 className="text-4xl font-bold text-[var(--title-color)]">
+                {user.user_metadata?.name || 'Usuário'}
+              </h1>
+              <p className="text-sm text-[var(--foreground)] opacity-80 mb-4">
+                {user.email}
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                  <span className="font-semibold">ID:</span> {user.id}
+                </div>
+              </div>
+
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => alert('Editar perfil em breve')}
+                  className="flex-1 py-2 bg-white text-[var(--title-color)] border border-[var(--divider-color)] rounded-md hover:bg-[var(--divider-color)] hover:text-white transition"
+                >
+                  Editar Perfil
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="flex-1 py-2 bg-[var(--divider-color)] text-white rounded-md hover:bg-[#6e3b1f] transition"
+                >
+                  Sair
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-
-        <button
-          onClick={handleLogout}
-          className="mt-8 w-full bg-[#a56734] hover:bg-[#6e3b1f] text-white font-bold py-3 rounded-md transition-colors"
-        >
-          Sair da Conta
-        </button>
       </section>
     </main>
   );

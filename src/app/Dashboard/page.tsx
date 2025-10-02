@@ -36,9 +36,10 @@ export default function DashboardPage() {
   return (
     <main className="mx-auto flex-1 bg-[var(--main-background)] min-h-screen pb-32">
       <div className="px-6 lg:px-20">
+
         {/* ===== HERO SECTION (LAYOUT DE DUAS COLUNAS E ESTILOS DO TEMA) ===== */}
         <section
-          className="h-[350px] overflow-hidden mb-12 py-8 rounded-3xl"
+          className="h-[350px] overflow-hidden mt-8 mb-12 py-8 rounded-3xl"
           style={{
             backgroundColor: "var(--color-surface-hero)",
             boxShadow: "0 0 20px 0 var(--color-shadow-hero)",

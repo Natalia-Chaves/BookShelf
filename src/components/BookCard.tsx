@@ -17,7 +17,7 @@ export default function BookCard({ book, onEdit, onDelete, onRate }: BookCardPro
   const coverSrc = cover || imageUrl || '/images/default-cover.jpg';
 
   return (
-    <div className="bg-[#EFEAE4] rounded-lg shadow-md overflow-hidden transform transition-all duration-300 hover:scale-105 flex flex-col h-full min-w-[160px]">
+    <div className="bg-[#EFEAE4] rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:z-10 flex flex-col h-full min-w-[160px]">
       <Link href={`/livro/${book.id}`} className="flex flex-col h-full cursor-pointer">
         <div className="relative w-full aspect-[2/3] p-4 flex items-center justify-center bg-gray-200">
           <img
@@ -52,7 +52,7 @@ export default function BookCard({ book, onEdit, onDelete, onRate }: BookCardPro
         <button
           type="button"
           onClick={() => onDelete(book)}
-          className="flex items-center text-red-700 hover:text-red-900 px-2 py-1 rounded hover:bg-red-100 sm:gap-2 sm:px-2"
+          className="flex items-center text-red-700 hover:text-red-900  px-2 py-1 rounded hover:bg-red-100 sm:gap-2 sm:px-2"
           aria-label={`Excluir ${title}`}
         >
           <Trash2 size={20} />
