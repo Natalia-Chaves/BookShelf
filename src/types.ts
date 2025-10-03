@@ -1,4 +1,3 @@
-// src/types.ts
 import { ReadingStatus } from '@prisma/client';
 
 export interface Book {

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
@@ -7,7 +7,7 @@ import BookCard from "@/components/BookCard";
 import AddBookForm from "@/components/AddBookForm";
 import EditBookForm from "@/components/EditBookForm";
 import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
-import HeroSection from "@/components/HeroSection"; 
+import HeroSection from "@/components/HeroSection";
 
 import type { Book } from "@/types";
 import { supabase } from "@/lib/supabaseClient";
@@ -125,8 +125,8 @@ export default function CatalogoPage() {
       .eq("id", book.id);
 
     if (!error) {
-      setAllBooks(prev =>
-        prev.map(b => (b.id === book.id ? updatedBook : b))
+      setAllBooks((prev) =>
+        prev.map((b) => (b.id === book.id ? updatedBook : b))
       );
     }
   };
@@ -140,36 +140,39 @@ export default function CatalogoPage() {
   }
 
   return (
-    <main 
-      className="mx-auto flex-1 bg-[var(--main-background)] min-h-screen pb-32"
-    >
-      
+    <main className="mx-auto flex-1 bg-[var(--main-background)] min-h-screen pb-32">
       {/* CONTÊINER DE ALINHAMENTO PRINCIPAL: Define o espaçamento de "4 dedos" (lg:px-20) */}
       <div className="px-6 lg:px-20">
-        
         {/* 1. HERO SECTION */}
-        <HeroSection /> 
-        
+        <HeroSection />
+
         {/* 2. CONTEÚDO DO CATÁLOGO: Fica alinhado com a Hero Section */}
-        <div className="mt-12"> 
+        <div className="mt-12">
           {/* Títulos e contador */}
-          <h2 className="text-3xl font-bold text-center mb-2" style={{ color: 'var(--text-primary)' }}>
-              Catálogo de Livros
+          <h2
+            className="text-3xl font-bold text-center mb-2"
+            style={{ color: "var(--text-primary)" }}
+          >
+            Catálogo de Livros
           </h2>
-          <p className="text-center mb-6" style={{ color: 'var(--text-primary)' }}>
-              Total de livros: <span className="font-semibold">{allBooks.length}</span>
+          <p
+            className="text-center mb-6"
+            style={{ color: "var(--text-primary)" }}
+          >
+            Total de livros:{" "}
+            <span className="font-semibold">{allBooks.length}</span>
           </p>
 
           {/* GRADE DOS LIVROS: Ajustada para ser menor */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-5 items-stretch">
-            {allBooks.map(book => (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-5 items-stretch">
+            {allBooks.map((book) => (
               <BookCard
                 key={book.id}
                 book={book}
                 onEdit={handleEditBook}
                 onDelete={handleDeleteBook}
                 onRate={handleRateBook}
-              />
+                onStatusUpdate={fetchBooks} 
             ))}
 
             {/* Botão + para adicionar livro */}
@@ -184,15 +187,11 @@ export default function CatalogoPage() {
             </div>
           </div>
         </div>
-      </div> {/* Fim do contêiner de alinhamento */}
-
+      </div>{" "}
+      {/* Fim do contêiner de alinhamento */}
       {showAddForm && !bookToEdit && (
-        <AddBookForm
-          onSave={handleSaveBook}
-          onCancel={handleCancelForm}
-        />
+        <AddBookForm onSave={handleSaveBook} onCancel={handleCancelForm} />
       )}
-
       {bookToEdit && (
         <EditBookForm
           book={bookToEdit}
@@ -200,7 +199,6 @@ export default function CatalogoPage() {
           onCancel={handleCancelForm}
         />
       )}
-
       {bookToDelete && (
         <DeleteConfirmationModal
           bookTitle={bookToDelete.title}
