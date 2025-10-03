@@ -30,11 +30,8 @@ export default function CadastroPage({ theme = 'light' }: CadastroPageProps) {
             
             {/* Cabeçalho */}
             <div className="flex flex-col items-center mb-10">
-                <h1 className="font-bold flex items-center gap-2 text-4xl text-center">
-                    <BookOpen className="size-10" />
-                    CaféBooks
-                </h1>
-                <p className="mt-2 text-lg font-medium">
+                
+                <p className="mt-2 text-lg font-bold font-medium">
                     Crie sua conta. É rápido e fácil!
                 </p>
             </div>

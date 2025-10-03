@@ -28,21 +28,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const setup = async () => {
       const { data } = await supabase.auth.getSession();
+      const session = data?.session;
 
-      if (data.session?.user) {
-        const { id, email, user_metadata } = data.session.user;
-        // Buscar nome no profile
+      if (session?.user) {
+        const { id, email, user_metadata } = session.user;
+
         const { data: profileData } = await supabase
           .from('profiles')
-          .select('full_name')
+          .select('name')
           .eq('id', id)
           .single();
 
-        const name = profileData?.full_name || user_metadata?.name || 'Usuário';
+        const name = profileData?.name || user_metadata?.name || 'Usuário';
         setUser({ id, name, email });
       } else {
         setUser(null);
       }
+
       setIsLoading(false);
     };
 
@@ -53,10 +55,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const { id, email, user_metadata } = session.user;
         const { data: profileData } = await supabase
           .from('profiles')
-          .select('full_name')
+          .select('name')
           .eq('id', id)
           .single();
-        const name = profileData?.full_name || user_metadata?.name || 'Usuário';
+
+        const name = profileData?.name || user_metadata?.name || 'Usuário';
         setUser({ id, name, email });
       } else {
         setUser(null);
@@ -73,14 +76,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (error || !data.session) {
       throw new Error('E-mail ou senha incorretos.');
     }
+
     const { id, user_metadata } = data.user;
     const { data: profileData } = await supabase
       .from('profiles')
-      .select('full_name')
+      .select('name')
       .eq('id', id)
       .single();
 
-    const name = profileData?.full_name || user_metadata?.name || 'Usuário';
+    const name = profileData?.name || user_metadata?.name || 'Usuário';
     setUser({ id, name, email });
     router.push('/catalogo');
   };
@@ -92,15 +96,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated: !!user,
-        user,
-        isLoading,
-        login,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={{ isAuthenticated: !!user, user, isLoading, login, logout }}>
       {!isLoading && children}
     </AuthContext.Provider>
   );

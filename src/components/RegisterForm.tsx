@@ -12,7 +12,6 @@ interface RegisterFormProps {
   onSuccess: () => void;
 }
 
-// Schema de validação
 const registerSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
   email: z.string().email("Digite um e-mail válido"),
@@ -27,6 +26,7 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function RegisterForm({ isDark, onSuccess }: RegisterFormProps) {
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -39,28 +39,18 @@ export default function RegisterForm({ isDark, onSuccess }: RegisterFormProps) {
 
   const onSubmit = async (data: RegisterFormData) => {
     setError('');
+    setMessage('');
     setIsLoading(true);
 
     try {
-      // 1) Verificar se email já existe na tabela profiles
-      const { data: existingUser, error: fetchError } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('email', data.email)
-        .single();
-
-      if (existingUser) {
-        setError('Esse e-mail já está cadastrado.');
-        setIsLoading(false);
-        return;
-      }
-
-      // 2) Criar usuário no Auth do Supabase
-      const { data: response, error: signUpError } = await supabase.auth.signUp({
+      // 1) Cria usuário no Auth
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
-          // user_metadata é opcional, vamos salvar o nome no profile depois
+          data: {
+            name: data.name, // Metadata opcional para o auth
+          },
         },
       });
 
@@ -70,28 +60,36 @@ export default function RegisterForm({ isDark, onSuccess }: RegisterFormProps) {
         return;
       }
 
-      // 3) Inserir dados na tabela profiles
-      if (response.user) {
-        const { id } = response.user;
-        const { error: insertError } = await supabase.from('profiles').insert([
+      if (!signUpData.user) {
+        setError('Falha ao criar usuário. Tente novamente.');
+        setIsLoading(false);
+        return;
+      }
+
+      // 2) Insere o perfil na tabela 'profiles'
+      const { error: insertError } = await supabase
+        .from('profiles')
+        .insert([
           {
-            id,
+            id: signUpData.user.id,
             name: data.name,
             email: data.email,
           },
         ]);
-        if (insertError) {
-          setError('Erro ao salvar perfil.');
-          setIsLoading(false);
-          return;
-        }
+
+      if (insertError) {
+        // Se der erro, pode ser por email duplicado ou outro problema
+        setError(`Erro ao salvar perfil: ${insertError.message}`);
+        setIsLoading(false);
+        return;
       }
 
-      alert('Conta criada com sucesso! Verifique seu e-mail para confirmar o cadastro.');
+      setMessage('Conta criada com sucesso! Verifique seu e-mail para confirmar o cadastro.');
       onSuccess();
 
     } catch (err) {
       setError('Ocorreu um erro inesperado. Tente novamente.');
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -118,6 +116,12 @@ export default function RegisterForm({ isDark, onSuccess }: RegisterFormProps) {
       {error && (
         <p className="text-red-600 text-sm mb-4 bg-red-100 p-2 rounded">
           {error}
+        </p>
+      )}
+
+      {message && (
+        <p className="text-green-600 text-sm mb-4 bg-green-100 p-2 rounded">
+          {message}
         </p>
       )}
 

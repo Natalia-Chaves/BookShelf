@@ -17,7 +17,7 @@ export default function BookCard({ book, onEdit, onDelete, onRate }: BookCardPro
   const coverSrc = cover || imageUrl || '/images/default-cover.jpg';
 
   return (
-    <div className="bg-[#EFEAE4] rounded-lg shadow-md overflow-hidden transform transition-all duration-300 hover:scale-105 flex flex-col h-full">
+    <div className="bg-[#EFEAE4] rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:z-10 flex flex-col h-full min-w-[160px]">
       <Link href={`/livro/${book.id}`} className="flex flex-col h-full cursor-pointer">
         <div className="relative w-full aspect-[2/3] p-4 flex items-center justify-center bg-gray-200">
           <img
@@ -38,25 +38,25 @@ export default function BookCard({ book, onEdit, onDelete, onRate }: BookCardPro
         <StarRating rating={rating} onRate={(newRating) => onRate(book, newRating)} />
       </div>
 
-      <div className="flex justify-between px-6 pb-4">
+      <div className="flex justify-around px-2 py-4">
         <button
           type="button"
           onClick={() => onEdit(book)}
-          className="flex items-center gap-2 text-yellow-700 hover:text-yellow-900"
+          className="flex items-center text-yellow-700 hover:text-yellow-900 px-2 py-1 rounded hover:bg-yellow-100 sm:gap-2 sm:px-2"
           aria-label={`Editar ${title}`}
         >
           <Pencil size={20} />
-          Editar
+          <span className="hidden md:inline">Editar</span>
         </button>
 
         <button
           type="button"
           onClick={() => onDelete(book)}
-          className="flex items-center gap-2 text-red-700 hover:text-red-900"
+          className="flex items-center text-red-700 hover:text-red-900  px-2 py-1 rounded hover:bg-red-100 sm:gap-2 sm:px-2"
           aria-label={`Excluir ${title}`}
         >
           <Trash2 size={20} />
-          Excluir
+          <span className="hidden md:inline">Excluir</span>
         </button>
       </div>
     </div>

@@ -28,6 +28,11 @@ export default function Navbar() {
   const isAuthPage = pathname === "/" || pathname === "/cadastro";
   const isCatalogPage = pathname === "/catalogo";
 
+  const handleLogout = async () => {
+    await logout();      // Executa logout do contexto (assumindo async)
+    router.push('/');    // Redireciona para a home após logout
+  };
+
   if (isAuthPage) {
     return (
       <nav className="w-full bg-[var(--background)] text-[var(--foreground)] relative">
@@ -85,7 +90,7 @@ export default function Navbar() {
         <div className="flex items-center gap-3 flex-shrink-0 ml-4">
           {isAuthenticated && (
             <button
-              onClick={logout}
+              onClick={handleLogout}
               className="w-10 h-10 flex items-center justify-center rounded-lg bg-[var(--form-background)] hover:opacity-80 transition"
               aria-label="Sair da conta"
             >
