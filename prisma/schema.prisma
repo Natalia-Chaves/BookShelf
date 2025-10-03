@@ -1,3 +1,5 @@
+// prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -6,23 +8,41 @@ datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
-  schemas   = ["public"] // só a schema que contém os livros
+  schemas   = ["public", "auth"]
+
+}
+
+enum ReadingStatus {
+  QUERO_LER // Padrão
+  LENDO
+  LIDO
+  PAUSADO
+  ABANDONADO
+
+  @@schema("public")
 }
 
 model books {
-  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title      String
-  author     String
-  genre      String
-  year       Int
-  pages      Int
-  pagesread  Int?
-  status     String
-  rating     Int?
-  synopsis   String?
-  cover      String?
-  imageurl   String?
-  created_at DateTime? @default(now()) @db.Timestamp(6)
-
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String
+  author      String
+  genre       String
+  year        Int
+  pages       Int
+  
+  
+  pagesread   Int?      // Manter como está, mas pode ser renomeado para 'currentPage'
+  
+  status      ReadingStatus @default(QUERO_LER) 
+  
+  
+  finishDate  DateTime? // Data de conclusão
+  
+  rating      Int?
+  synopsis    String?
+  cover       String?
+  imageurl    String?
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  
   @@schema("public")
 }

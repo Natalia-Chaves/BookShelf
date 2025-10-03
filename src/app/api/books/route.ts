@@ -2,12 +2,13 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prismaClient";
+import { ReadingStatus } from "@prisma/client";
 
 // GET /api/books
 export async function GET() {
   try {
-    const books = await prisma.book.findMany({
-      orderBy: { created_at: "desc" }, // ordena do mais recente pro mais antigo
+    const books = await prisma.books.findMany({
+      orderBy: { created_at: "desc" },
     });
 
     return NextResponse.json(books);
@@ -22,28 +23,44 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // Validação mínima (evita salvar dados quebrados)
+    // Validação mínima
     if (!body.title || !body.author) {
-      return NextResponse.json({ error: "Título e autor são obrigatórios." }, { status: 400 });
+      return NextResponse.json(
+        { error: "Título e autor são obrigatórios." },
+        { status: 400 }
+      );
     }
 
-    const newBook = await prisma.book.create({
+    // Validação do status (se fornecido)
+    const status = body.status || ReadingStatus.QUERO_LER;
+    if (!Object.values(ReadingStatus).includes(status)) {
+      return NextResponse.json(
+        { error: "Status de leitura inválido." },
+        { status: 400 }
+      );
+    }
+
+    const newBook = await prisma.books.create({
       data: {
         title: body.title,
         author: body.author,
         genre: body.genre || null,
         cover: body.cover || null,
+        imageurl: body.imageurl || null,
         year: typeof body.year === "number" ? body.year : null,
         pages: typeof body.pages === "number" ? body.pages : null,
-        synopsis: body.synopsis || "",
-        rating: 0,
-        status: body.status || "quero ler",
+        synopsis: body.synopsis || null,
+        rating: body.rating || null,
+        status: status, // Usa o enum válido
       },
     });
 
     return NextResponse.json(newBook, { status: 201 });
   } catch (error) {
     console.error("Erro no POST /api/books", error);
-    return NextResponse.json({ error: "Erro ao criar livro."}, {status: 500}) 
+    return NextResponse.json(
+      { error: "Erro ao criar livro." },
+      { status: 500 }
+    );
   }
 }
