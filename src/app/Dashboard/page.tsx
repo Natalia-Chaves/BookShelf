@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from "react";
 import type { Book } from "@/types";
@@ -16,11 +16,37 @@ export default function DashboardPage() {
   const [books, setBooks] = useState<Book[]>([]);
 
   useEffect(() => {
+    // Busca inicial dos livros
     const fetchBooks = async () => {
       const { data, error } = await supabase.from("books").select("*");
       if (!error && data) setBooks(data as Book[]);
     };
+
     fetchBooks();
+
+    // Configura o canal para escutar eventos do Supabase Realtime (v2)
+    const booksChannel = supabase.channel('public:books')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'books' },
+        (payload) => {
+          if (payload.event === 'INSERT') {
+            setBooks(prev => [payload.new, ...prev]);
+          }
+          if (payload.event === 'UPDATE') {
+            setBooks(prev => prev.map(book => book.id === payload.new.id ? payload.new : book));
+          }
+          if (payload.event === 'DELETE') {
+            setBooks(prev => prev.filter(book => book.id !== payload.old.id));
+          }
+        }
+      )
+      .subscribe();
+
+    // Cleanup ao desmontar componente
+    return () => {
+      supabase.removeChannel(booksChannel);
+    };
   }, []);
 
   const totalBooks = books.length;
@@ -28,9 +54,9 @@ export default function DashboardPage() {
     (sum, book) => sum + (book.pagesRead || 0),
     0
   );
-  const booksReading = books.filter((book) => book.status === "lendo").length;
+  const booksReading = books.filter((book) => book.status?.toLowerCase() === "lendo").length;
   const booksFinished = books.filter(
-    (book) => book.status === "finalizado"
+    (book) => book.status?.toLowerCase() === "finalizado"
   ).length;
 
   return (
@@ -56,7 +82,7 @@ export default function DashboardPage() {
                 Aqui está o resumo da sua jornada literária!
               </h1>
               <p
-                className="text-2xl" // Removida a classe md:text-left
+                className="text-2xl"
                 style={{ color: "var(--text-primary)" }}
               >
                 Acompanhe seu progresso de leitura e continue descobrindo novas
@@ -104,7 +130,6 @@ export default function DashboardPage() {
 }
 
 // --- Componente StatCard (Fundo Branco Fixo) ---
-
 interface StatCardProps {
   icon: React.ReactNode;
   label: string;

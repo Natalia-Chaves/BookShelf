@@ -1,26 +1,22 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
-
 import BookCard from "@/components/BookCard";
 import AddBookForm from "@/components/AddBookForm";
 import EditBookForm from "@/components/EditBookForm";
 import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
 import HeroSection from "@/components/HeroSection";
-
 import type { Book } from "@/types";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function CatalogoPage() {
   const [allBooks, setAllBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [showAddForm, setShowAddForm] = useState(false);
   const [bookToEdit, setBookToEdit] = useState<Book | null>(null);
   const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
 
-  // Função para limpar campos undefined antes de enviar ao Supabase
   function cleanObject<T extends Record<string, any>>(obj: T): Partial<T> {
     const cleaned: Partial<T> = {};
     for (const key in obj) {
@@ -31,84 +27,63 @@ export default function CatalogoPage() {
     return cleaned;
   }
 
-  // Função para carregar livros atualizados
   const fetchBooks = async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("books")
       .select("*")
       .order("created_at", { ascending: false });
+
     if (!error && data) setAllBooks(data as Book[]);
     setLoading(false);
   };
 
-  // Buscar livros na montagem do componente
   useEffect(() => {
     fetchBooks();
   }, []);
 
-  // Abrir form de adicionar livro
   const handleShowAddForm = () => {
     setBookToEdit(null);
     setShowAddForm(true);
   };
 
-  // Abrir form de editar livro
   const handleEditBook = (book: Book) => {
     setBookToEdit(book);
     setShowAddForm(false);
   };
 
-  // Salvar livro (novo ou editado)
   const handleSaveBook = async (book: Book) => {
     if (bookToEdit) {
-      // Atualizar no Supabase
       const cleanedBook = cleanObject(book);
       const { error } = await supabase
         .from("books")
         .update(cleanedBook)
         .eq("id", book.id);
-      if (!error) {
-        await fetchBooks(); // Atualiza lista após edição
-      }
+      if (!error) await fetchBooks();
     } else {
-      // Inserir no Supabase
       const cleanedBook = cleanObject(book);
       const { data, error } = await supabase
         .from("books")
         .insert([cleanedBook])
         .select();
-      if (!error && data) {
-        await fetchBooks(); // Atualiza lista após inserção
-      }
+      if (!error && data) await fetchBooks();
     }
 
     setShowAddForm(false);
     setBookToEdit(null);
   };
 
-  // Cancelar forms
-  const handleCancelForm = () => {
-    setShowAddForm(false);
-    setBookToEdit(null);
-  };
-
-  // Preparar exclusão de livro
   const handleDeleteBook = (book: Book) => {
     setBookToDelete(book);
   };
 
-  // Confirmar exclusão e atualizar lista
   const handleConfirmDelete = async () => {
     if (!bookToDelete) return;
-
     const { error } = await supabase
       .from("books")
       .delete()
       .eq("id", bookToDelete.id);
-    if (!error) {
-      await fetchBooks(); // Atualiza lista após exclusão
-    }
+    if (!error) await fetchBooks();
     setBookToDelete(null);
   };
 
@@ -116,7 +91,6 @@ export default function CatalogoPage() {
     setBookToDelete(null);
   };
 
-  // Avaliar livro
   const handleRateBook = async (book: Book, rating: number) => {
     const updatedBook = { ...book, rating };
     const { error } = await supabase
@@ -125,9 +99,24 @@ export default function CatalogoPage() {
       .eq("id", book.id);
 
     if (!error) {
-      setAllBooks((prev) =>
-        prev.map((b) => (b.id === book.id ? updatedBook : b))
+      setAllBooks(prev =>
+        prev.map(b => (b.id === book.id ? updatedBook : b))
       );
+    }
+  };
+
+  const handleUpdateBookStatus = async (book: Book, newStatus: string) => {
+    const { error } = await supabase
+      .from('books')
+      .update({ status: newStatus })
+      .eq('id', book.id);
+
+    if (!error) {
+      setAllBooks(prev =>
+        prev.map(b => (b.id === book.id ? { ...b, status: newStatus } : b))
+      );
+    } else {
+      console.error('Erro ao atualizar status:', error);
     }
   };
 
@@ -141,41 +130,36 @@ export default function CatalogoPage() {
 
   return (
     <main className="mx-auto flex-1 bg-[var(--main-background)] min-h-screen pb-32">
-      {/* CONTÊINER DE ALINHAMENTO PRINCIPAL: Define o espaçamento de "4 dedos" (lg:px-20) */}
       <div className="px-6 lg:px-20">
-        {/* 1. HERO SECTION */}
         <HeroSection />
 
-        {/* 2. CONTEÚDO DO CATÁLOGO: Fica alinhado com a Hero Section */}
         <div className="mt-12">
-          {/* Títulos e contador */}
           <h2
             className="text-3xl font-bold text-center mb-2"
-            style={{ color: "var(--text-primary)" }}
+            style={{ color: 'var(--text-primary)' }}
           >
             Catálogo de Livros
           </h2>
+
           <p
             className="text-center mb-6"
-            style={{ color: "var(--text-primary)" }}
+            style={{ color: 'var(--text-primary)' }}
           >
-            Total de livros:{" "}
-            <span className="font-semibold">{allBooks.length}</span>
+            Total de livros: <span className="font-semibold">{allBooks.length}</span>
           </p>
 
-          {/* GRADE DOS LIVROS: Ajustada para ser menor */}
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-5 items-stretch">
-            {allBooks.map((book) => (
+            {allBooks.map(book => (
               <BookCard
                 key={book.id}
                 book={book}
                 onEdit={handleEditBook}
                 onDelete={handleDeleteBook}
                 onRate={handleRateBook}
-                onStatusUpdate={fetchBooks} 
+                onStatusUpdate={handleUpdateBookStatus}
+              />
             ))}
 
-            {/* Botão + para adicionar livro */}
             <div className="flex items-center justify-center p-4">
               <button
                 onClick={handleShowAddForm}
@@ -187,18 +171,20 @@ export default function CatalogoPage() {
             </div>
           </div>
         </div>
-      </div>{" "}
-      {/* Fim do contêiner de alinhamento */}
+      </div>
+
       {showAddForm && !bookToEdit && (
-        <AddBookForm onSave={handleSaveBook} onCancel={handleCancelForm} />
+        <AddBookForm onSave={handleSaveBook} onCancel={() => setShowAddForm(false)} />
       )}
+
       {bookToEdit && (
         <EditBookForm
           book={bookToEdit}
           onSave={handleSaveBook}
-          onCancel={handleCancelForm}
+          onCancel={() => setBookToEdit(null)}
         />
       )}
+
       {bookToDelete && (
         <DeleteConfirmationModal
           bookTitle={bookToDelete.title}

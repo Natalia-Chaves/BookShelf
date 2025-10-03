@@ -26,10 +26,6 @@ export default function PerfilPage() {
     fetchUser();
   }, []);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push('/');
-  };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -110,12 +106,7 @@ export default function PerfilPage() {
                 >
                   Editar Perfil
                 </button>
-                <button
-                  onClick={handleLogout}
-                  className="flex-1 py-2 bg-[var(--divider-color)] text-white rounded-md hover:bg-[#6e3b1f] transition"
-                >
-                  Sair
-                </button>
+              
               </div>
             </div>
           </div>
