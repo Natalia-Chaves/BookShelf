@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
@@ -13,19 +13,33 @@ export default function ForgotPasswordPage() {
     setMessage("");
     setError("");
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/resetpassword`,
-    });
+    if (!email) {
+      setError("Por favor, insira um email válido.");
+      return;
+    }
 
-    if (error) {
-      setError("Erro ao enviar email de redefinição.");
-    } else {
-      setMessage("Email de redefinição enviado com sucesso!");
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/resetpassword`,
+      });
+
+      if (error) {
+        console.error("Erro Supabase:", error);
+        setError(error.message); // Mostra o erro real do Supabase
+      } else {
+        setMessage("Email de redefinição enviado com sucesso!");
+      }
+    } catch (err) {
+      console.error("Erro inesperado:", err);
+      setError("Ocorreu um erro inesperado. Tente novamente mais tarde.");
     }
   };
 
   return (
-    <form onSubmit={handleResetPassword} className="max-w-lg mx-auto mt-20 p-6 bg-white shadow-md rounded-md">
+    <form 
+      onSubmit={handleResetPassword} 
+      className="max-w-lg mx-auto mt-20 p-6 bg-white shadow-md rounded-md"
+    >
       <h2 className="text-2xl font-bold mb-4">Esqueci minha senha</h2>
 
       <input
@@ -37,7 +51,10 @@ export default function ForgotPasswordPage() {
         className="w-full px-3 py-2 border border-gray-300 rounded-md mb-4"
       />
 
-      <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-md">
+      <button 
+        type="submit" 
+        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors"
+      >
         Enviar link de redefinição
       </button>
 
