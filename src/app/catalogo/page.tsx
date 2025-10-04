@@ -9,6 +9,18 @@ import HeroSection from '@/components/HeroSection';
 import type { Book } from '@/types';
 import { supabase } from '@/lib/supabaseClient';
 
+// Função para normalizar status para as opções válidas
+const STATUS_OPTIONS = ['Quero ler', 'Lendo', 'Lido'];
+
+function normalizeStatus(status?: string): string {
+  if (!status) return '';
+  const normalized = status.trim().toLowerCase();
+  const matched = STATUS_OPTIONS.find(
+    (opt) => opt.toLowerCase() === normalized
+  );
+  return matched || '';
+}
+
 export default function CatalogoPage() {
   const [allBooks, setAllBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,6 +89,48 @@ export default function CatalogoPage() {
     setBookToDelete(null);
   };
 
+  // Atualiza o rating do livro
+  const handleRateBook = async (book: Book, newRating: number) => {
+    const { data, error } = await supabase
+      .from('books')
+      .update({ rating: newRating })
+      .eq('id', book.id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Erro ao atualizar rating:', error.message);
+      alert('Erro ao salvar avaliação.');
+      return;
+    }
+
+    setAllBooks((prevBooks) =>
+      prevBooks.map((b) => (b.id === book.id ? { ...b, rating: newRating } : b))
+    );
+  };
+
+  // Atualiza o status do livro
+  const handleStatusUpdate = async (book: Book, newStatus: string) => {
+    const formattedStatus = normalizeStatus(newStatus);
+
+    const { data, error } = await supabase
+      .from('books')
+      .update({ status: formattedStatus })
+      .eq('id', book.id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Erro ao atualizar status:', error.message);
+      alert('Erro ao atualizar status.');
+      return;
+    }
+
+    setAllBooks((prevBooks) =>
+      prevBooks.map((b) => (b.id === book.id ? data : b))
+    );
+  };
+
   if (loading) {
     return (
       <main className="mx-auto flex-1 px-4 bg-[var(--main-background)] min-h-screen pb-32 flex items-center justify-center">
@@ -106,8 +160,8 @@ export default function CatalogoPage() {
                 book={book}
                 onEdit={handleEditBook}
                 onDelete={handleDeleteBook}
-                onRate={() => {}}
-                onStatusUpdate={() => {}}
+                onRate={handleRateBook}
+                onStatusUpdate={(newStatus) => handleStatusUpdate(book, newStatus)}
               />
             ))}
 

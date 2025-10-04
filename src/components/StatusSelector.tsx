@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Select,
   SelectTrigger,
@@ -10,29 +10,38 @@ import {
 } from '@/components/ui/select';
 import type { Book } from '@/types';
 
+// Opções fixas e corretas de status (tamanho e capitalização devem bater)
+const STATUS_OPTIONS = ['Quero ler', 'Lendo', 'Lido'];
+
+// Normaliza o valor para um dos valores válidos de STATUS_OPTIONS, ou retorna ''
+function normalizeStatus(status?: string): string {
+  if (!status) return '';
+  const normalized = status.trim().toLowerCase();
+  const matched = STATUS_OPTIONS.find(
+    (opt) => opt.toLowerCase() === normalized
+  );
+  return matched || '';
+}
+
 interface StatusSelectorProps {
   book: Book;
   onStatusUpdate: (newStatus: string) => void;
 }
 
-const STATUS_OPTIONS = ['Quero ler', 'Lendo', 'Lido'];
-
 export default function StatusSelector({ book, onStatusUpdate }: StatusSelectorProps) {
-  const [status, setStatus] = useState<string>(book.status ?? '');
+  const [status, setStatus] = useState<string>(normalizeStatus(book.status));
 
+  // Atualiza o status interno toda vez que a prop book.status mudar
   useEffect(() => {
-    setStatus(book.status ?? '');
+    const normalized = normalizeStatus(book.status);
+    if (normalized !== status) {
+      setStatus(normalized);
+    }
   }, [book.status]);
 
   const handleChange = (value: string) => {
-    setStatus(value);
-    onStatusUpdate(value);
-  };
-
-  const statusColors: Record<string, string> = {
-    'Quero ler': 'bg-gray-200 text-gray-800',
-    'Lendo': 'bg-yellow-300 text-yellow-900',
-    'Lido': 'bg-green-500 text-white',
+    setStatus(value);       // Atualiza local para resposta imediata
+    onStatusUpdate(value);  // Notifica para atualizar no banco
   };
 
   return (
@@ -46,9 +55,7 @@ export default function StatusSelector({ book, onStatusUpdate }: StatusSelectorP
             <SelectItem
               key={opt}
               value={opt}
-              className={`rounded-md px-3 py-2 cursor-pointer select-none text-sm transition-colors ${
-                status === opt ? `${statusColors[opt]} font-semibold` : 'hover:bg-gray-100'
-              }`}
+              className="rounded-md px-3 py-2 cursor-pointer select-none text-sm transition-colors hover:bg-gray-100"
             >
               {opt}
             </SelectItem>

@@ -12,7 +12,7 @@ interface BookCardProps {
   onEdit: (book: Book) => void;
   onDelete: (book: Book) => void;
   onRate: (book: Book, rating: number) => void;
-  onStatusUpdate: (book: Book, newStatus: string) => void;
+  onStatusUpdate: (newStatus: string) => void;
 }
 
 export default function BookCard({
@@ -28,7 +28,7 @@ export default function BookCard({
 
   return (
     <div className="bg-[#EFEAE4] rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:z-10 flex flex-col h-full min-w-[160px]">
-      
+
       {/* Capa + Info */}
       <Link href={`/livro/${book.id}`} className="flex flex-col h-full cursor-pointer">
         <div className="relative w-full aspect-[2/3] p-4 flex items-center justify-center bg-gray-200">
@@ -58,7 +58,7 @@ export default function BookCard({
       {/* Seletor de status */}
       <StatusSelector
         book={book}
-        onStatusUpdate={(newStatus) => onStatusUpdate(book, newStatus)}
+        onStatusUpdate={onStatusUpdate}
       />
 
       {/* Ações: editar / excluir */}

@@ -49,15 +49,17 @@ export default function DashboardPage() {
     };
   }, []);
 
+  // Função para normalizar texto (opcional, para evitar erros de espaço/capitalização)
+  const normalize = (str?: string) => str?.trim().toLowerCase();
+
   const totalBooks = books.length;
   const totalPagesRead = books.reduce(
     (sum, book) => sum + (book.pagesRead || 0),
     0
   );
-  const booksReading = books.filter((book) => book.status?.toLowerCase() === "lendo").length;
-  const booksFinished = books.filter(
-    (book) => book.status?.toLowerCase() === "finalizado"
-  ).length;
+  const booksWantToRead = books.filter((book) => normalize(book.status) === "quero ler").length;
+  const booksReading = books.filter((book) => normalize(book.status) === "lendo").length;
+  const booksFinished = books.filter((book) => normalize(book.status) === "lido").length;
 
   return (
     <main className="mx-auto flex-1 bg-[var(--main-background)] min-h-screen pb-32">
@@ -102,7 +104,7 @@ export default function DashboardPage() {
         </section>
 
         {/* ===== CARDS (ESTATÍSTICAS) - Fundo Fixo ===== */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           <StatCard
             icon={<BookOpen size={40} className="text-[#6F4E37]" />}
             label="Total de Livros"
@@ -110,6 +112,11 @@ export default function DashboardPage() {
           />
           <StatCard
             icon={<BookMarked size={40} className="text-blue-600" />}
+            label="Quero Ler"
+            value={booksWantToRead}
+          />
+          <StatCard
+            icon={<BookMarked size={40} className="text-yellow-500" />}
             label="Lendo Atualmente"
             value={booksReading}
           />
