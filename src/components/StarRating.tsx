@@ -4,12 +4,12 @@ import React, { useState } from 'react';
 import { Star } from 'lucide-react';
 
 interface StarRatingProps {
-  rating?: number;        // Avaliação atual
-  total?: number;         // Total de estrelas (default: 5)
+  rating?: number;               // Avaliação atual
+  total?: number;                // Total de estrelas (default: 5)
   onRate?: (rating: number) => void; // Callback ao clicar
-  size?: number;          // Tamanho opcional das estrelas
-  color?: string;         // Cor da estrela preenchida
-  strokeColor?: string;   // Cor da borda
+  size?: number;                 // Tamanho das estrelas
+  color?: string;               // Cor preenchida
+  strokeColor?: string;         // Cor da borda
 }
 
 export default function StarRating({
@@ -21,7 +21,6 @@ export default function StarRating({
   strokeColor = '#6F4E37',
 }: StarRatingProps) {
   const [hoverRating, setHoverRating] = useState<number | null>(null);
-
   const currentRating = hoverRating !== null ? hoverRating : rating;
 
   return (
@@ -37,7 +36,7 @@ export default function StarRating({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              onRate?.(starIndex);
+              onRate?.(starIndex); // ← Protegido com optional chaining
             }}
             onMouseEnter={() => setHoverRating(starIndex)}
             onMouseLeave={() => setHoverRating(null)}

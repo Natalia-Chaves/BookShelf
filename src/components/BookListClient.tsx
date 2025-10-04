@@ -8,7 +8,7 @@ import type { Book } from "@/types";
 import { supabase } from "@/lib/supabaseClient";
 
 type BookListClientProps = {
-  initialBooks?: Book[]; // opcional com default
+  initialBooks?: Book[];
 };
 
 export default function BookListClient({ initialBooks = [] }: BookListClientProps) {
@@ -21,15 +21,30 @@ export default function BookListClient({ initialBooks = [] }: BookListClientProp
   const reloadBooks = async () => {
     setLoading(true);
     setError(null);
+
+    const {
+      data: { user },
+      error: userError
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      setError("Erro de autenticação. Faça login novamente.");
+      setLoading(false);
+      return;
+    }
+
     const { data, error } = await supabase
       .from("books")
       .select("*")
+      .eq("user_id", user.id)
       .order("created_at", { ascending: false });
+
     if (error) {
       setError("Erro ao carregar livros.");
     } else if (data) {
       setBooks(data);
     }
+
     setLoading(false);
   };
 
@@ -46,19 +61,27 @@ export default function BookListClient({ initialBooks = [] }: BookListClientProp
   const handleDelete = async (book: Book) => {
     setLoading(true);
     setError(null);
+
     const { error } = await supabase.from("books").delete().eq("id", book.id);
+
     if (error) {
       setError("Erro ao excluir livro.");
     } else {
       setBooks(prev => prev.filter(b => b.id !== book.id));
     }
+
     setLoading(false);
   };
 
   const handleRate = async (book: Book, rating: number) => {
     setLoading(true);
     setError(null);
-    const { error } = await supabase.from("books").update({ rating }).eq("id", book.id);
+
+    const { error } = await supabase
+      .from("books")
+      .update({ rating })
+      .eq("id", book.id);
+
     if (error) {
       setError("Erro ao avaliar livro.");
     } else {
@@ -66,6 +89,7 @@ export default function BookListClient({ initialBooks = [] }: BookListClientProp
         prev.map(b => (b.id === book.id ? { ...b, rating } : b))
       );
     }
+
     setLoading(false);
   };
 
@@ -80,6 +104,8 @@ export default function BookListClient({ initialBooks = [] }: BookListClientProp
     setBookBeingEdited(null);
   };
 
+  const isEditing = !!bookBeingEdited;
+
   return (
     <div className="p-4">
       <button
@@ -90,36 +116,36 @@ export default function BookListClient({ initialBooks = [] }: BookListClientProp
         Adicionar Livro
       </button>
 
-      {error && (
-        <p className="mb-4 text-red-600 font-semibold">{error}</p>
-      )}
-
-      {loading && (
-        <p className="mb-4 text-gray-600">Carregando...</p>
-      )}
+      {error && <p className="mb-4 text-red-600 font-semibold">{error}</p>}
+      {loading && <p className="mb-4 text-gray-600">Carregando...</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {(books ?? []).map(book => (
+        {books.map(book => (
           <BookCard
             key={book.id}
             book={book}
             onEdit={handleEdit}
             onDelete={handleDelete}
-            onRate={handleRate}
+            onRate={handleRate} onStatusUpdate={function (book: Book, newStatus: string): void {
+              throw new Error("Function not implemented.");
+            } }            
           />
         ))}
       </div>
 
-      {showAddForm && !bookBeingEdited && (
-        <AddBookForm onSave={handleSaveBook} onCancel={handleCancelForm} />
-      )}
-
-      {bookBeingEdited && (
+      {isEditing ? (
         <EditBookForm
           book={bookBeingEdited}
           onSave={handleSaveBook}
           onCancel={handleCancelForm}
         />
+      ) : (
+        showAddForm && (
+          <AddBookForm
+            onSave={handleSaveBook}
+            onCancel={handleCancelForm}
+          />
+        )
       )}
     </div>
   );

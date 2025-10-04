@@ -1,17 +1,34 @@
+'use server';
+
 import BookListClient from "./BookListClient";
 import type { Book } from "@/types";
-import { supabase } from "@/lib/supabaseClient";
-
-async function fetchBooks(): Promise<Book[]> {
-  const { data, error } = await supabase.from("books").select("*").order("created_at", { ascending: false });
-  if (error) {
-    console.error("Erro ao buscar livros:", error.message);
-    return [];
-  }
-  return data || [];
-}
+import { cookies } from "next/headers";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import type { Database } from "@/types/supabase"; // Se tiver types gerados pelo Supabase
 
 export default async function BookList() {
-  const books = await fetchBooks();
-  return <BookListClient initialBooks={books} />;
+  const supabase = createServerComponentClient<Database>({ cookies });
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    console.error("Usuário não autenticado");
+    return <div className="text-red-500">Erro: usuário não autenticado.</div>;
+  }
+
+  const { data: books, error } = await supabase
+    .from("books")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Erro ao buscar livros:", error.message);
+    return <div className="text-red-500">Erro ao buscar livros.</div>;
+  }
+
+  return <BookListClient initialBooks={books || []} />;
 }

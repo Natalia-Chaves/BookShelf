@@ -1,4 +1,5 @@
-import { ReadingStatus } from '@prisma/client';
+import { read } from "fs";
+import { ReadingStatus } from "../src/types/reading-status";
 
 export interface Book {
   id: string;
@@ -15,20 +16,17 @@ export interface Book {
   cover?: string | null;
   imageurl?: string | null;
   created_at?: Date | string | null;
+  owner: string | null;
 }
 
 export const allReadingStatuses: ReadingStatus[] = [
   'QUERO_LER',
   'LENDO',
   'LIDO',
-  'PAUSADO',
-  'ABANDONADO'
 ];
 
 export const statusLabels: Record<ReadingStatus, string> = {
   'QUERO_LER': 'Quero Ler',
   'LENDO': 'Lendo',
-  'LIDO': 'Lido',
-  'PAUSADO': 'Pausado',
-  'ABANDONADO': 'Abandonado'
+  'LIDO': 'Lido'
 };

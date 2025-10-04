@@ -4,7 +4,7 @@ import { headers, cookies } from "next/headers";
 
 export function createServerSupabaseClient() {
   return createServerComponentClient({
-    headers,
     cookies,
+    headers,
   });
 }

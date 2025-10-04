@@ -5,6 +5,7 @@ import StarRating from './StarRating';
 import StatusSelector from './StatusSelector';
 import type { Book } from '@/types';
 import Link from 'next/link';
+import { useState } from 'react';
 
 interface BookCardProps {
   book: Book;
@@ -22,43 +23,50 @@ export default function BookCard({
   onStatusUpdate,
 }: BookCardProps) {
   const { title, author, cover, imageUrl, rating = 0 } = book;
-  const coverSrc = cover || imageUrl || '/images/default-cover.jpg';
+  const fallbackCover = '/images/default-cover.jpg';
+  const [imgSrc, setImgSrc] = useState(cover || imageUrl || fallbackCover);
 
   return (
     <div className="bg-[#EFEAE4] rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:z-10 flex flex-col h-full min-w-[160px]">
+      
+      {/* Capa + Info */}
       <Link href={`/livro/${book.id}`} className="flex flex-col h-full cursor-pointer">
         <div className="relative w-full aspect-[2/3] p-4 flex items-center justify-center bg-gray-200">
           <img
-            src={coverSrc}
+            src={imgSrc}
+            onError={() => setImgSrc(fallbackCover)}
             alt={`Capa do livro ${title}`}
-            className="w-full h-full object-contain"
+            className="w-full h-full object-contain rounded-md"
           />
         </div>
+
         <div className="p-4 flex flex-col items-center text-center flex-grow justify-between">
           <div>
-            <h3 className="text-xl font-semibold text-[#6F4E37] mb-2">{title}</h3>
-            <p className="text-[#8B4513] italic mb-4">{author}</p>
+            <h3 className="text-lg font-semibold text-[#6F4E37] mb-2 line-clamp-2">
+              {title}
+            </h3>
+            <p className="text-[#8B4513] italic text-sm line-clamp-1">{author}</p>
           </div>
         </div>
       </Link>
 
-      {/* Rating */}
+      {/* Avaliação por estrelas */}
       <div className="p-4 pt-0 flex justify-center">
         <StarRating rating={rating} onRate={(newRating) => onRate(book, newRating)} />
       </div>
 
-      {/* Status selector */}
+      {/* Seletor de status */}
       <StatusSelector
         book={book}
         onStatusUpdate={(newStatus) => onStatusUpdate(book, newStatus)}
       />
 
-      {/* Ações */}
-      <div className="flex justify-around px-2 py-4">
+      {/* Ações: editar / excluir */}
+      <div className="flex justify-around px-2 py-4 border-t border-[#d4c4b4]">
         <button
           type="button"
           onClick={() => onEdit(book)}
-          className="flex items-center text-yellow-700 hover:text-yellow-900 px-2 py-1 rounded hover:bg-yellow-100 sm:gap-2 sm:px-2"
+          className="flex items-center text-yellow-700 hover:text-yellow-900 px-2 py-1 rounded hover:bg-yellow-100 sm:gap-2 sm:px-2 transition-colors"
           aria-label={`Editar ${title}`}
         >
           <Pencil size={20} />
@@ -68,7 +76,7 @@ export default function BookCard({
         <button
           type="button"
           onClick={() => onDelete(book)}
-          className="flex items-center text-red-700 hover:text-red-900 px-2 py-1 rounded hover:bg-red-100 sm:gap-2 sm:px-2"
+          className="flex items-center text-red-700 hover:text-red-900 px-2 py-1 rounded hover:bg-red-100 sm:gap-2 sm:px-2 transition-colors"
           aria-label={`Excluir ${title}`}
         >
           <Trash2 size={20} />

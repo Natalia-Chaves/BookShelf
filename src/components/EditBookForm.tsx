@@ -11,8 +11,8 @@ interface EditBookFormProps {
 }
 
 export default function EditBookForm({ book, onSave, onCancel }: EditBookFormProps) {
-  const [title, setTitle] = useState(book.title);
-  const [author, setAuthor] = useState(book.author);
+  const [title, setTitle] = useState(book.title || '');
+  const [author, setAuthor] = useState(book.author || '');
   const [cover, setCover] = useState(book.cover || '');
   const [genre, setGenre] = useState(book.genre || '');
   const [year, setYear] = useState<number | ''>(book.year ?? '');
@@ -42,8 +42,8 @@ export default function EditBookForm({ book, onSave, onCancel }: EditBookFormPro
     setLoading(true);
     setError('');
 
-    // Prepare apenas os campos atualizáveis (sem `id`)
-    const updatedFields = {
+    // Campos atualizáveis - undefined para não atualizar no Supabase
+    const updatedFields: Partial<Book> = {
       title: title.trim(),
       author: author.trim(),
       cover: cover.trim() || undefined,
@@ -53,23 +53,29 @@ export default function EditBookForm({ book, onSave, onCancel }: EditBookFormPro
       synopsis: synopsis.trim() || '',
     };
 
-    const { data, error } = await supabase
-      .from("books")
-      .update(updatedFields)
-      .eq("id", book.id)
-      .select()
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from("books")
+        .update(updatedFields)
+        .eq("id", book.id)
+        .select()
+        .single();
 
-    setLoading(false);
+      if (error) {
+        setError("Erro ao atualizar livro: " + error.message);
+        console.error(error);
+        setLoading(false);
+        return;
+      }
 
-    if (error) {
-      console.error(error);
-      setError("Erro ao atualizar livro.");
-      return;
-    }
-
-    if (data) {
-      onSave(data); // Retorna o livro atualizado
+      if (data) {
+        onSave(data);
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Erro inesperado ao atualizar livro.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -159,6 +165,7 @@ export default function EditBookForm({ book, onSave, onCancel }: EditBookFormPro
             type="button"
             onClick={onCancel}
             className="px-4 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-white transition"
+            disabled={loading}
           >
             Cancelar
           </button>

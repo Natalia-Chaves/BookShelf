@@ -43,30 +43,32 @@ export default function RegisterForm({ isDark, onSuccess }: RegisterFormProps) {
     setIsLoading(true);
 
     try {
-      // 1) Cria usuário no Auth
+      // 1) Cria o usuário no Auth
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
-          data: {
-            name: data.name, // Metadata opcional para o auth
-          },
+          data: { name: data.name },
         },
       });
 
       if (signUpError) {
-        setError(signUpError.message);
+        if (signUpError.message.includes('email')) {
+          setError("Este e-mail já está em uso.");
+        } else {
+          setError(signUpError.message);
+        }
         setIsLoading(false);
         return;
       }
 
       if (!signUpData.user) {
-        setError('Falha ao criar usuário. Tente novamente.');
+        setError('Erro inesperado ao criar usuário.');
         setIsLoading(false);
         return;
       }
 
-      // 2) Insere o perfil na tabela 'profiles'
+      // 2) Insere na tabela "profiles"
       const { error: insertError } = await supabase
         .from('profiles')
         .insert([
@@ -78,7 +80,6 @@ export default function RegisterForm({ isDark, onSuccess }: RegisterFormProps) {
         ]);
 
       if (insertError) {
-        // Se der erro, pode ser por email duplicado ou outro problema
         setError(`Erro ao salvar perfil: ${insertError.message}`);
         setIsLoading(false);
         return;
@@ -88,7 +89,7 @@ export default function RegisterForm({ isDark, onSuccess }: RegisterFormProps) {
       onSuccess();
 
     } catch (err) {
-      setError('Ocorreu um erro inesperado. Tente novamente.');
+      setError('Erro inesperado. Tente novamente mais tarde.');
       console.error(err);
     } finally {
       setIsLoading(false);

@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import type { Book } from '@/types';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '../lib/supabaseClient';
 
 interface AddBookFormProps {
   bookToEdit?: Book | null;
-  onSave: () => void;
+  onSave: (savedBook: Book) => void;
   onCancel: () => void;
 }
 
@@ -48,40 +48,52 @@ export default function AddBookForm({
     setLoading(true);
     setError('');
 
-    const newBook: Omit<Book, 'id' | 'rating' | 'pagesRead' | 'imageUrl'> = {
+    const parsedYear = typeof year === 'number' ? year : parseInt(year as any, 10);
+    const parsedPages = typeof pages === 'number' ? pages : parseInt(pages as any, 10);
+
+    const bookData = {
       title: title.trim(),
       author: author.trim(),
-      cover: cover.trim() || undefined,
-      genre: genre.trim() || undefined,
-      year: typeof year === 'number' ? year : undefined,
-      pages: typeof pages === 'number' ? pages : undefined,
-      synopsis: synopsis.trim() || '',
-      status: bookToEdit ? bookToEdit.status : 'quero ler',
+      cover: cover.trim() || null,
+      genre: genre.trim() || null,
+      year: isNaN(parsedYear) ? null : parsedYear,
+      pages: isNaN(parsedPages) ? null : parsedPages,
+      synopsis: synopsis.trim() || null,
+      status: bookToEdit?.status || 'Quero ler',
     };
 
-    let result;
-    if (bookToEdit) {
-      result = await supabase
-        .from('books')
-        .update(newBook)
-        .eq('id', bookToEdit.id)
-        .select();
-    } else {
-      result = await supabase
-        .from('books')
-        .insert([newBook])
-        .select();
-    }
+    try {
+      let result;
 
-    if (result.error) {
-      console.error('Erro ao salvar:', result.error.message);
-      setError('Erro ao salvar o livro. Verifique os dados e tente novamente.');
+      if (bookToEdit) {
+        result = await supabase
+          .from('books')
+          .update(bookData)
+          .eq('id', bookToEdit.id)
+          .select()
+          .single();
+      } else {
+        result = await supabase
+          .from('books')
+          .insert([bookData])
+          .select()
+          .single();
+      }
+
+      if (result.error) {
+        console.error('Erro ao salvar:', result.error.message);
+        setError('Erro ao salvar o livro. Verifique os dados e tente novamente.');
+        setLoading(false);
+        return;
+      }
+
+      onSave(result.data);
+    } catch (err: any) {
+      console.error(err);
+      setError('Erro inesperado ao salvar o livro.');
+    } finally {
       setLoading(false);
-      return;
     }
-
-    setLoading(false);
-    onSave();
   };
 
   return (
@@ -99,8 +111,8 @@ export default function AddBookForm({
           placeholder="Título"
           value={title}
           onChange={e => setTitle(e.target.value)}
-          className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
           required
+          className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
         />
 
         <input
@@ -108,8 +120,8 @@ export default function AddBookForm({
           placeholder="Autor"
           value={author}
           onChange={e => setAuthor(e.target.value)}
-          className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
           required
+          className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
         />
 
         <input
@@ -117,7 +129,7 @@ export default function AddBookForm({
           placeholder="URL da capa (imagem)"
           value={cover}
           onChange={e => setCover(e.target.value)}
-          className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+          className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)]"
         />
 
         <input
@@ -125,17 +137,15 @@ export default function AddBookForm({
           placeholder="Gênero"
           value={genre}
           onChange={e => setGenre(e.target.value)}
-          className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+          className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)]"
         />
 
         <input
           type="number"
           placeholder="Ano"
           value={year}
-          onChange={e =>
-            setYear(e.target.value === '' ? '' : Number(e.target.value))
-          }
-          className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+          onChange={e => setYear(e.target.value === '' ? '' : Number(e.target.value))}
+          className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)]"
           min={0}
           max={new Date().getFullYear()}
         />
@@ -144,10 +154,8 @@ export default function AddBookForm({
           type="number"
           placeholder="Número de páginas"
           value={pages}
-          onChange={e =>
-            setPages(e.target.value === '' ? '' : Number(e.target.value))
-          }
-          className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+          onChange={e => setPages(e.target.value === '' ? '' : Number(e.target.value))}
+          className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)]"
           min={1}
         />
 
@@ -156,30 +164,25 @@ export default function AddBookForm({
           value={synopsis}
           onChange={e => setSynopsis(e.target.value)}
           rows={4}
-          className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] resize-none"
+          className="w-full px-3 py-2 rounded-lg bg-[var(--input-background)] text-[var(--foreground)] border border-[var(--border)] resize-none"
         />
 
-        {error && (
-          <p className="text-red-500 text-sm text-center">{error}</p>
-        )}
-
-        {loading && (
-          <p className="text-sm text-center text-[var(--primary)]">Salvando...</p>
-        )}
+        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+        {loading && <p className="text-sm text-center text-[var(--primary)]">Salvando...</p>}
 
         <div className="flex justify-end gap-3">
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 rounded-lg bg-[var(--divider-color)] text-[var(--foreground)] hover:brightness-110 transition"
+            disabled={loading}
+            className="px-4 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-white transition"
           >
             Cancelar
           </button>
-
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 rounded-lg bg-[var(--divider-color)] text-[var(--foreground)] hover:brightness-110 transition"
+            className="px-4 py-2 rounded-lg bg-[var(--primary)] text-white hover:brightness-90 transition"
           >
             Salvar
           </button>

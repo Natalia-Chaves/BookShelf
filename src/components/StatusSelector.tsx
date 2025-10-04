@@ -26,7 +26,7 @@ export default function StatusSelector({ book, onStatusUpdate }: StatusSelectorP
 
   const handleChange = (value: string) => {
     setStatus(value);
-    onStatusUpdate(value); // <- Chama a função passada via props
+    onStatusUpdate(value);
   };
 
   const statusColors: Record<string, string> = {

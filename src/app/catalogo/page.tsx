@@ -1,14 +1,13 @@
 'use client';
 
-import { useState, useEffect } from "react";
-import { Plus } from "lucide-react";
-import BookCard from "@/components/BookCard";
-import AddBookForm from "@/components/AddBookForm";
-import EditBookForm from "@/components/EditBookForm";
-import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
-import HeroSection from "@/components/HeroSection";
-import type { Book } from "@/types";
-import { supabase } from "@/lib/supabaseClient";
+import { useState, useEffect } from 'react';
+import { Plus } from 'lucide-react';
+import BookCard from '@/components/BookCard';
+import AddBookForm from '@/components/AddBookForm';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
+import HeroSection from '@/components/HeroSection';
+import type { Book } from '@/types';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function CatalogoPage() {
   const [allBooks, setAllBooks] = useState<Book[]>([]);
@@ -17,24 +16,18 @@ export default function CatalogoPage() {
   const [bookToEdit, setBookToEdit] = useState<Book | null>(null);
   const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
 
-  function cleanObject<T extends Record<string, any>>(obj: T): Partial<T> {
-    const cleaned: Partial<T> = {};
-    for (const key in obj) {
-      if (obj[key] !== undefined) {
-        cleaned[key] = obj[key];
-      }
-    }
-    return cleaned;
-  }
-
   const fetchBooks = async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from("books")
-      .select("*")
-      .order("created_at", { ascending: false });
+      .from('books')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-    if (!error && data) setAllBooks(data as Book[]);
+    if (error) {
+      console.error('Erro ao buscar livros:', error.message);
+    } else if (data) {
+      setAllBooks(data as Book[]);
+    }
     setLoading(false);
   };
 
@@ -49,26 +42,11 @@ export default function CatalogoPage() {
 
   const handleEditBook = (book: Book) => {
     setBookToEdit(book);
-    setShowAddForm(false);
+    setShowAddForm(true);
   };
 
-  const handleSaveBook = async (book: Book) => {
-    if (bookToEdit) {
-      const cleanedBook = cleanObject(book);
-      const { error } = await supabase
-        .from("books")
-        .update(cleanedBook)
-        .eq("id", book.id);
-      if (!error) await fetchBooks();
-    } else {
-      const cleanedBook = cleanObject(book);
-      const { data, error } = await supabase
-        .from("books")
-        .insert([cleanedBook])
-        .select();
-      if (!error && data) await fetchBooks();
-    }
-
+  const handleSaveBook = async () => {
+    await fetchBooks();
     setShowAddForm(false);
     setBookToEdit(null);
   };
@@ -79,45 +57,24 @@ export default function CatalogoPage() {
 
   const handleConfirmDelete = async () => {
     if (!bookToDelete) return;
+
     const { error } = await supabase
-      .from("books")
+      .from('books')
       .delete()
-      .eq("id", bookToDelete.id);
-    if (!error) await fetchBooks();
+      .eq('id', bookToDelete.id);
+
+    if (error) {
+      console.error('Erro ao deletar livro:', error.message);
+      alert('Erro ao deletar livro.');
+      return;
+    }
+
+    await fetchBooks();
     setBookToDelete(null);
   };
 
   const handleCancelDelete = () => {
     setBookToDelete(null);
-  };
-
-  const handleRateBook = async (book: Book, rating: number) => {
-    const updatedBook = { ...book, rating };
-    const { error } = await supabase
-      .from("books")
-      .update({ rating })
-      .eq("id", book.id);
-
-    if (!error) {
-      setAllBooks(prev =>
-        prev.map(b => (b.id === book.id ? updatedBook : b))
-      );
-    }
-  };
-
-  const handleUpdateBookStatus = async (book: Book, newStatus: string) => {
-    const { error } = await supabase
-      .from('books')
-      .update({ status: newStatus })
-      .eq('id', book.id);
-
-    if (!error) {
-      setAllBooks(prev =>
-        prev.map(b => (b.id === book.id ? { ...b, status: newStatus } : b))
-      );
-    } else {
-      console.error('Erro ao atualizar status:', error);
-    }
   };
 
   if (loading) {
@@ -134,29 +91,23 @@ export default function CatalogoPage() {
         <HeroSection />
 
         <div className="mt-12">
-          <h2
-            className="text-3xl font-bold text-center mb-2"
-            style={{ color: 'var(--text-primary)' }}
-          >
+          <h2 className="text-3xl font-bold text-center mb-2" style={{ color: 'var(--text-primary)' }}>
             Catálogo de Livros
           </h2>
 
-          <p
-            className="text-center mb-6"
-            style={{ color: 'var(--text-primary)' }}
-          >
+          <p className="text-center mb-6" style={{ color: 'var(--text-primary)' }}>
             Total de livros: <span className="font-semibold">{allBooks.length}</span>
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-5 items-stretch">
-            {allBooks.map(book => (
+            {allBooks.map((book) => (
               <BookCard
                 key={book.id}
                 book={book}
                 onEdit={handleEditBook}
                 onDelete={handleDeleteBook}
-                onRate={handleRateBook}
-                onStatusUpdate={handleUpdateBookStatus}
+                onRate={() => {}}
+                onStatusUpdate={() => {}}
               />
             ))}
 
@@ -173,15 +124,14 @@ export default function CatalogoPage() {
         </div>
       </div>
 
-      {showAddForm && !bookToEdit && (
-        <AddBookForm onSave={handleSaveBook} onCancel={() => setShowAddForm(false)} />
-      )}
-
-      {bookToEdit && (
-        <EditBookForm
-          book={bookToEdit}
+      {showAddForm && (
+        <AddBookForm
+          bookToEdit={bookToEdit}
           onSave={handleSaveBook}
-          onCancel={() => setBookToEdit(null)}
+          onCancel={() => {
+            setShowAddForm(false);
+            setBookToEdit(null);
+          }}
         />
       )}
 
