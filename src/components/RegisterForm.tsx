@@ -43,14 +43,12 @@ export default function RegisterForm({ isDark, onSuccess }: RegisterFormProps) {
     setIsLoading(true);
 
     try {
-      // 1) Cria o usuário no Auth 
+      // 1) Cria o usuário no Auth
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
-          data: { 
-            name: data.name 
-          },
+          data: { name: data.name },
         },
       });
 
@@ -60,13 +58,36 @@ export default function RegisterForm({ isDark, onSuccess }: RegisterFormProps) {
         } else {
           setError(signUpError.message);
         }
-      } else if (!signUpData.user) {
-        setError('Erro inesperado ao criar usuário.');
-      } else {
-        setMessage('Conta criada com sucesso! Verifique seu e-mail para confirmar o cadastro.');
-        onSuccess();
+        setIsLoading(false);
+        return;
       }
-     
+
+      if (!signUpData.user) {
+        setError('Erro inesperado ao criar usuário.');
+        setIsLoading(false);
+        return;
+      }
+
+      // 2) Insere na tabela "profiles"
+      const { error: insertError } = await supabase
+        .from('profiles')
+        .insert([
+          {
+            id: signUpData.user.id,
+            name: data.name,
+            email: data.email,
+          },
+        ]);
+
+      if (insertError) {
+        setError(`Erro ao salvar perfil: ${insertError.message}`);
+        setIsLoading(false);
+        return;
+      }
+
+      setMessage('Conta criada com sucesso! Verifique seu e-mail para confirmar o cadastro.');
+      onSuccess();
+
     } catch (err) {
       setError('Erro inesperado. Tente novamente mais tarde.');
       console.error(err);
@@ -82,7 +103,7 @@ export default function RegisterForm({ isDark, onSuccess }: RegisterFormProps) {
     ? "bg-[#c7925c] hover:bg-[#a56734]"
     : "bg-[#512b1e] hover:bg-[#A56734]";
   const inputStyle =
-    "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a56734] bg-transparent";
+    "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#a56734]";
 
   return (
     <form
