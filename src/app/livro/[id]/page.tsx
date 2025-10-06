@@ -79,7 +79,7 @@ export default function BookDetailPage() {
       >
         <div className="md:w-1/3">
           <img
-            src={book.cover || book.imageUrl || "/placeholder.jpg"}
+            src={book.cover || book.imageurl || "/placeholder.jpg"}
             alt={`Capa do livro ${book.title}`}
             className="w-full h-auto rounded shadow-md"
           />

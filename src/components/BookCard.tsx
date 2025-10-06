@@ -22,9 +22,9 @@ export default function BookCard({
   onRate,
   onStatusUpdate,
 }: BookCardProps) {
-  const { title, author, cover, imageUrl, rating = 0 } = book;
+  const { title, author, cover, imageurl, rating = 0 } = book;
   const fallbackCover = '/images/default-cover.jpg';
-  const [imgSrc, setImgSrc] = useState(cover || imageUrl || fallbackCover);
+  const [imgSrc, setImgSrc] = useState(cover || imageurl || fallbackCover);
 
   return (
     <div className="bg-[#EFEAE4] rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:z-10 flex flex-col h-full min-w-[160px]">
@@ -52,7 +52,7 @@ export default function BookCard({
 
       {/* Avaliação por estrelas */}
       <div className="p-4 pt-0 flex justify-center">
-        <StarRating rating={rating} onRate={(newRating) => onRate(book, newRating)} />
+        <StarRating rating={rating ?? undefined} onRate={(newRating) => onRate(book, newRating)} />
       </div>
 
       {/* Seletor de status */}

@@ -28,5 +28,7 @@ export const allReadingStatuses: ReadingStatus[] = [
 export const statusLabels: Record<ReadingStatus, string> = {
   'QUERO_LER': 'Quero Ler',
   'LENDO': 'Lendo',
-  'LIDO': 'Lido'
+  'LIDO': 'Lido',
+  [ReadingStatus.PAUSED]: "",
+  [ReadingStatus.ABANDONED]: ""
 };
