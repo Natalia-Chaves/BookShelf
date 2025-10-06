@@ -48,8 +48,8 @@ export default function AddBookForm({
     setLoading(true);
     setError('');
 
-    const parsedYear = typeof year === 'number' ? year : parseInt(year as any, 10);
-    const parsedPages = typeof pages === 'number' ? pages : parseInt(pages as any, 10);
+    const parsedYear = typeof year === 'number' ? year : parseInt(year, 10);
+    const parsedPages = typeof pages === 'number' ? pages : parseInt(pages, 10);
 
     const bookData = {
       title: title.trim(),
@@ -88,8 +88,8 @@ export default function AddBookForm({
       }
 
       onSave(result.data);
-    } catch (err: any) {
-      console.error(err);
+    } catch (err) {
+      console.error(err instanceof Error ? err.message : err);
       setError('Erro inesperado ao salvar o livro.');
     } finally {
       setLoading(false);

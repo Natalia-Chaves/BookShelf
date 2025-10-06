@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
+import { User } from '@supabase/supabase-js';
 
 export default function PerfilPage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [avatar, setAvatar] = useState<string | null>(null);
   const router = useRouter();

@@ -3,14 +3,13 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { BookOpen, Search, LogOut, Menu } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, isLoading } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showPlaceholder, setShowPlaceholder] = useState(true);
   const [isSmallLogo, setIsSmallLogo] = useState(false);
@@ -25,12 +24,14 @@ export default function Navbar() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Espera o estado de autenticação carregar
+  if (isLoading) return null;
+
   const isAuthPage = pathname === "/" || pathname === "/cadastro";
   const isCatalogPage = pathname === "/catalogo";
 
   const handleLogout = async () => {
-    await logout();      // Executa logout do contexto (assumindo async)
-    router.push('/');    // Redireciona para a home após logout
+    await logout(); // logout já redireciona para "/"
   };
 
   if (isAuthPage) {
@@ -63,7 +64,9 @@ export default function Navbar() {
               <Link href="/catalogo" className="text-base xl:text-lg font-medium hover:text-[var(--primary)] transition">Catálogo</Link>
               <Link href="/dashboard" className="text-base xl:text-lg font-medium hover:text-[var(--primary)] transition">Dashboard</Link>
               <Link href="/novidades" className="text-base xl:text-lg font-medium hover:text-[var(--primary)] transition">Novidades</Link>
-              {isAuthenticated && <Link href="/perfil" className="text-base xl:text-lg font-medium hover:text-[var(--primary)] transition">Perfil</Link>}
+              {isAuthenticated && (
+                <Link href="/perfil" className="text-base xl:text-lg font-medium hover:text-[var(--primary)] transition">Perfil</Link>
+              )}
             </div>
           )}
 
@@ -87,6 +90,7 @@ export default function Navbar() {
           )}
         </div>
 
+        {/* BOTÕES À DIREITA */}
         <div className="flex items-center gap-3 flex-shrink-0 ml-4">
           {isAuthenticated && (
             <button
@@ -106,7 +110,9 @@ export default function Navbar() {
           <Link href="/catalogo" className="hover:text-[var(--primary)]">Catálogo</Link>
           <Link href="/dashboard" className="hover:text-[var(--primary)]">Dashboard</Link>
           <Link href="/novidades" className="hover:text-[var(--primary)]">Novidades</Link>
-          {isAuthenticated && <Link href="/perfil" className="hover:text-[var(--primary)]">Perfil</Link>}
+          {isAuthenticated && (
+            <Link href="/perfil" className="hover:text-[var(--primary)]">Perfil</Link>
+          )}
         </div>
       )}
     </nav>

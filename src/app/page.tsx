@@ -8,15 +8,14 @@ interface HomePageProps {
 }
 
 export default function HomePage({ theme }: HomePageProps) {
+  
   const isDark = theme === 'dark';
-
   const leftBg = isDark ? "bg-[var(--background)] text-[var(--foreground)]" : "bg-[#d7a86e] text-[#3e2723]";
   const rightBg = isDark ? "bg-[#512b1e] text-[var(--foreground)]" : "bg-[#d7a86e] text-[#ffffff]";
 
   return (
     <div className="flex h-full w-full"> 
       
-      {/* Metade Esquerda: Boas-Vindas */}
       <div 
         className={`flex-1 hidden md:flex justify-center items-center flex-col gap-6 p-8 text-center transition-colors duration-300 ${leftBg}`}
       >
@@ -33,7 +32,6 @@ export default function HomePage({ theme }: HomePageProps) {
         </p>
       </div>
 
-      {/* Metade Direita: Formulário de Login */}
       <div className={`w-full md:flex-1 flex justify-center items-center p-8 transition-colors duration-300 ${rightBg}`}>
         <LoginForm isDark={isDark} />
       </div>

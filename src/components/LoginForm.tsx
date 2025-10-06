@@ -28,8 +28,12 @@ export default function LoginForm({ isDark }: LoginFormProps) {
 
     try {
       await login(email, password);
-    } catch (err: any) {
-      setError(err.message || 'Erro ao tentar login.');
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Erro ao tentar login.');
+      }
     } finally {
       setIsLoading(false);
     }
