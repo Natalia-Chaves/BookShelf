@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { authService } from '@/services/authService';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -15,14 +15,11 @@ export default function ForgotPassword() {
     setError('');
     setMessage('');
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-
-    if (error) {
-      setError(error.message);
-    } else {
+    try {
+      await authService.resetPassword(email);
       setMessage('Confira seu e-mail para redefinir sua senha.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao enviar email');
     }
     setLoading(false);
   };

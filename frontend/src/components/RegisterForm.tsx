@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { supabase } from '@/lib/supabaseClient';
+import { authService } from '@/services/authService';
 
 interface RegisterFormProps {
   isDark: boolean;
@@ -43,53 +43,14 @@ export default function RegisterForm({ isDark, onSuccess }: RegisterFormProps) {
     setIsLoading(true);
 
     try {
-      // 1) Cria o usuário no Auth
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          data: { name: data.name },
-        },
-      });
-
-      if (signUpError) {
-        if (signUpError.message.includes('email')) {
-          setError("Este e-mail já está em uso.");
-        } else {
-          setError(signUpError.message);
-        }
-        setIsLoading(false);
-        return;
-      }
-
-      if (!signUpData.user) {
-        setError('Erro inesperado ao criar usuário.');
-        setIsLoading(false);
-        return;
-      }
-
-      // 2) Insere na tabela "profiles"
-      const { error: insertError } = await supabase
-        .from('profiles')
-        .insert([
-          {
-            id: signUpData.user.id,
-            name: data.name,
-            email: data.email,
-          },
-        ]);
-
-      if (insertError) {
-        setError(`Erro ao salvar perfil: ${insertError.message}`);
-        setIsLoading(false);
-        return;
-      }
-
-      setMessage('Conta criada com sucesso! Verifique seu e-mail para confirmar o cadastro.');
+      await authService.signup(data.email, data.password, data.name);
+      setMessage('Conta criada com sucesso! Você já pode fazer login.');
       onSuccess();
-
-    } catch (err) {
-      setError('Erro inesperado. Tente novamente mais tarde.');
+    } catch (err: any) {
+      // Tenta pegar a mensagem do backend
+      const backendMsg = err?.response?.data?.error;
+      const errorMessage = backendMsg || (err instanceof Error ? err.message : 'Erro inesperado. Tente novamente mais tarde.');
+      setError(errorMessage);
       console.error(err);
     } finally {
       setIsLoading(false);

@@ -2,13 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
+import { authService } from "@/services/authService";
 
-interface ResetPasswordProps {
-  accessToken?: string;
-}
-
-export default function ResetPassword({ accessToken }: ResetPasswordProps) {
+export default function ResetPassword() {
   const router = useRouter();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -32,13 +28,12 @@ export default function ResetPassword({ accessToken }: ResetPasswordProps) {
 
     setLoading(true);
 
-    const { error: updateError } = await supabase.auth.updateUser({ password });
-
-    if (updateError) {
-      setError(updateError.message);
-    } else {
+    try {
+      await authService.updatePassword(password);
       setMessage("Senha alterada com sucesso! Redirecionando...");
       setTimeout(() => router.push("/"), 3000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao alterar senha');
     }
 
     setLoading(false);

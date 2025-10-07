@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "title": "O Senhor dos Anéis",
+    "author": "J.R.R. Tolkien",
+    "genre": "Fantasia",
+    "year": 1954,
+    "pages": 1216,
+    "pagesRead": 300,
+    "status": "lendo",
+    "rating": 5,
+    "synopsis": "Uma jornada épica pela Terra Média para destruir o Um Anel.",
+    "cover": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1566425108i/33.jpg",
+    "user_id": "demo-user",
+    "created_at": "2025-10-06T23:25:29.553Z"
+  },
+  {
+    "id": "2",
+    "title": "1984",
+    "author": "George Orwell",
+    "genre": "Ficção Científica",
+    "year": 1949,
+    "pages": 328,
+    "pagesRead": 328,
+    "status": "finalizado",
+    "rating": 5,
+    "synopsis": "Em um regime totalitário, um homem luta contra a vigilância e o controle absoluto.",
+    "cover": "https://m.media-amazon.com/images/I/61t0bwt1s3L._UF1000,1000_QL80_.jpg",
+    "user_id": "demo-user",
+    "created_at": "2025-10-06T23:25:29.555Z"
+  }
+]

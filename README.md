@@ -1,132 +1,133 @@
-# BookShelf
+# BookShelf - Sistema de Gerenciamento de Livros
 
-## Visão Geral
+Este projeto foi refatorado para separar o frontend do backend, proporcionando melhor organização e escalabilidade.
 
-O BookShelf é uma aplicação web moderna e intuitiva, desenvolvida com Next.js, projetada para ajudar os amantes de livros a organizar e explorar suas coleções. Com uma interface amigável, o projeto permite que os usuários gerenciem seus livros, descubram novos títulos e compartilhem suas opiniões através de um sistema de avaliação.
-
-## 🚀 Funcionalidades Principais
-
-O BookShelf oferece um conjunto robusto de funcionalidades para uma experiência completa de gerenciamento de livros:
-
-*   **✅ Sistema de Autenticação:** Permite que os usuários se cadastrem e façam login de forma segura para acessar suas coleções personalizadas.
-*   **✅ Catálogo de Livros:** Explore uma vasta biblioteca de livros, com opções de busca e filtragem para encontrar exatamente o que você procura.
-*   **✅ Detalhes do Livro:** Visualize informações detalhadas sobre cada livro, incluindo sinopse, autor, capa e avaliações de outros usuários.
-*   **✅ Sistema de Avaliação:** Atribua classificações por estrelas aos livros que você leu e veja a média das avaliações da comunidade.
-*   **✅ Gerenciamento de Coleção:** Adicione e remova livros da sua coleção pessoal, mantendo um registro organizado de suas leituras.
-
-## 💻 Tecnologias Utilizadas
-
-Este projeto foi construído com as seguintes tecnologias de ponta:
-
-*   **Next.js:** Um framework React para aplicações web de alto desempenho, com renderização do lado do servidor e geração de sites estáticos.
-*   **TypeScript:** Uma linguagem de programação que adiciona tipagem estática ao JavaScript, melhorando a robustez e a manutenibilidade do código.
-*   **CSS (com PostCSS):** Para estilização flexível e modular, garantindo um design responsivo e atraente.
-*   **ESLint:** Para manter a qualidade do código e garantir a conformidade com os padrões de estilo.
-
-## ⚙️ Como Acessar e Executar o Projeto
-
-Siga os passos abaixo para configurar e executar o BookShelf em seu ambiente de desenvolvimento local.
-
-### Pré-requisitos
-
-Certifique-se de ter instalado em sua máquina:
-
-*   **Node.js** (versão 18 ou superior)
-*   Um gerenciador de pacotes: **npm**, **yarn**, **pnpm** ou **bun**.
-
-### Instalação
-
-1.  **Clone o repositório:**
-
-    ```bash
-    git clone https://github.com/Debug-Cafe/BookShelf.git
-    ```
-
-2.  **Navegue até o diretório do projeto:**
-
-    ```bash
-    cd BookShelf
-    ```
-
-3.  **Instale as dependências:**
-
-    ```bash
-    npm install
-    # ou
-    yarn install
-    # ou
-    pnpm install
-    # ou
-    bun install
-    ```
-
-### Executando o Servidor de Desenvolvimento
-
-Para iniciar a aplicação em modo de desenvolvimento:
-
-```bash
-npm run dev
-# ou
-yarn dev
-# ou
-pnpm dev
-# ou
-bun dev
-```
-
-Após a execução, abra seu navegador e acesse [http://localhost:3000](http://localhost:3000) para visualizar a aplicação.
-
-## 🏗️ Estrutura do Projeto
-
-A organização do código segue uma estrutura clara e modular:
+## 📁 Estrutura do Projeto
 
 ```
 BookShelf/
-├── public/                  # Arquivos estáticos (imagens, ícones, etc.)
-├── src/
-│   ├── app/                 # Rotas e páginas da aplicação (cadastro, catálogo, detalhes de livros)
-│   │   ├── cadastro/
-│   │   ├── catalogo/
-│   │   ├── globals.css      # Estilos globais
-│   │   ├── layout.tsx       # Layout principal da aplicação
-│   │   ├── livro/           # Páginas de detalhes de livros
-│   │   └── page.tsx         # Página inicial
-│   ├── components/          # Componentes React reutilizáveis (botões, cards, formulários)
-│   │   ├── AddBookForm.tsx
-│   │   ├── BookCard.tsx
-│   │   ├── BookList.tsx
-│   │   ├── Card.tsx
-│   │   ├── DeleteConfirmationModal.tsx
-│   │   ├── Footer.tsx
-│   │   ├── LoginForm.tsx
-│   │   ├── Navbar.tsx
-│   │   ├── RegisterForm.tsx
-│   │   └── StarRating.tsx
-│   ├── contexts/            # Contextos React para gerenciamento de estado global
-│   ├── lib/                 # Funções utilitárias e bibliotecas de apoio
-│   └── types.ts             # Definições de tipos TypeScript para o projeto
-├── styles/                  # Estilos específicos de componentes e módulos
-├── .gitignore               # Arquivos e diretórios a serem ignorados pelo Git
-├── eslint.config.mjs        # Configuração do ESLint para linting de código
-├── next.config.ts           # Configuração do Next.js
-├── package.json             # Metadados do projeto e lista de dependências
-├── package-lock.json        # Registro exato das dependências instaladas (npm)
-├── postcss.config.mjs       # Configuração do PostCSS
-└── tsconfig.json            # Configuração do TypeScript
+├── backend/                 # API Express.js
+│   ├── src/
+│   │   ├── controllers/     # Controladores das rotas
+│   │   ├── routes/         # Definições das rotas
+│   │   ├── config/         # Configurações (Supabase, DB)
+│   │   ├── middleware/     # Middlewares customizados
+│   │   └── server.js       # Servidor principal
+│   ├── package.json
+│   └── .env.example
+├── frontend/               # Aplicação Next.js
+│   ├── src/
+│   │   ├── app/           # Pages e layouts do App Router
+│   │   ├── components/    # Componentes React
+│   │   ├── services/      # Serviços para comunicação com API
+│   │   ├── lib/           # Utilitários e configurações
+│   │   └── types/         # Definições de tipos TypeScript
+│   ├── package.json
+│   └── .env.local.example
+└── README.md
 ```
 
-## 🤝 Contribuição
+## 🚀 Como Executar
 
-Contribuições são bem-vindas! Se você deseja aprimorar o BookShelf, siga estas diretrizes:
+### Backend (API)
 
-1.  Faça um fork do repositório.
-2.  Crie uma nova branch para sua feature (`git checkout -b feature/nome-da-feature`).
-3.  Faça suas alterações e commit (`git commit -m 'feat: Adiciona nova funcionalidade X'`).
-4.  Envie para a branch (`git push origin feature/nome-da-feature`).
-5.  Abra um Pull Request detalhando suas mudanças.
+1. Navegue até a pasta backend:
+```bash
+cd backend
+```
 
-## 📄 Licença
+2. Instale as dependências:
+```bash
+npm install
+```
 
-Este projeto está licenciado sob a Licença MIT. Consulte o arquivo `LICENSE` na raiz do repositório para mais detalhes.
+3. Configure as variáveis de ambiente:
+```bash
+cp .env.example .env
+```
+Edite o arquivo `.env` com suas configurações do Supabase.
 
+4. Execute o servidor:
+```bash
+npm run dev
+```
+O backend será executado em `http://localhost:3001`
 
+### Frontend (Next.js)
+
+1. Navegue até a pasta frontend:
+```bash
+cd frontend
+```
+
+2. Instale as dependências:
+```bash
+npm install
+```
+
+3. Configure as variáveis de ambiente:
+```bash
+cp .env.local.example .env.local
+```
+Edite o arquivo `.env.local` com suas configurações.
+
+4. Execute o frontend:
+```bash
+npm run dev
+```
+O frontend será executado em `http://localhost:3000`
+
+## 📡 APIs Disponíveis
+
+### Autenticação
+- `POST /api/auth/signup` - Cadastrar usuário
+- `POST /api/auth/signin` - Login
+- `POST /api/auth/signout` - Logout
+- `POST /api/auth/reset-password` - Resetar senha
+- `POST /api/auth/update-password` - Atualizar senha
+
+### Livros
+- `GET /api/books` - Listar todos os livros
+- `GET /api/books/:id` - Buscar livro por ID
+- `POST /api/books` - Criar novo livro
+- `PUT /api/books/:id` - Atualizar livro
+- `DELETE /api/books/:id` - Deletar livro
+- `GET /api/books/user/:userId` - Livros de um usuário
+
+## 🛠 Tecnologias Utilizadas
+
+### Backend
+- Node.js + Express.js
+- Supabase (Database & Auth)
+- CORS, Helmet, Morgan
+
+### Frontend
+- Next.js 15
+- React 19
+- TypeScript
+- Tailwind CSS
+- Axios
+- Radix UI
+
+## 📝 Próximos Passos
+
+1. Configure as variáveis de ambiente em ambos os projetos
+2. Execute `npm install` em cada pasta
+3. Inicie o backend primeiro, depois o frontend
+4. Teste as funcionalidades básicas
+
+## 🔧 Scripts Disponíveis
+
+### Backend
+- `npm run dev` - Executa em modo desenvolvimento
+- `npm start` - Executa em modo produção
+
+### Frontend  
+- `npm run dev` - Executa em modo desenvolvimento
+- `npm run build` - Gera build de produção
+- `npm start` - Executa build de produção
+- `npm run lint` - Executa linting
+
+## 🌐 Variáveis de Ambiente
+
+Consulte os arquivos `.env.example` (backend) e `.env.local.example` (frontend) para ver todas as variáveis necessárias.
